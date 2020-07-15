@@ -1,8 +1,8 @@
 import numpy as np
 import scipy.spatial as sp  # Is the library scipy allowed?
 import dataset
+import time
 import visual
-import timeit
 
 K = np.arange(50)
 
@@ -14,21 +14,21 @@ def R(data1, data2):
         return
 
     f = n - np.count_nonzero(np.isclose(data1, data2).all(axis=1))
-    return f/n
+    return f / n
 
 
 # return list of indices of nearest points
 # x is in array-shape
-def k_nearest(data, x, k):                          # very time consuming (~2.6 sec)
+def k_nearest(data, x, k):  # very time consuming (~2.6 sec)
     cen = np.repeat(data[:, 1:][:, np.newaxis, :], len(x), axis=1) - x  # (~0.6 sec)
-    sq = np.square(cen)                                                 # (~0.2 sec)
-    dist = np.sum(sq, axis=2)                                           # (~0.4 sec)
-    return np.argsort(dist, axis=0)[:k]                                 # (~1.4 sec)
+    sq = np.square(cen)  # (~0.2 sec)
+    dist = np.sum(sq, axis=2)  # (~0.4 sec)
+    return np.argsort(dist, axis=0)[:k]  # (~1.4 sec)
 
 
 def k_nearest_alt(data, x, k):
-    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')             # (~0.1 sec)
-    return np.argpartition(dist, k, axis=0)[:k]                         # (~0.5 sec)
+    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
+    return np.argpartition(dist, k, axis=0)[:k]  # (~0.5 sec)
 
 
 # computes f_D,k for given x values
@@ -60,10 +60,12 @@ def stitch(y, x):
     return data
 
 
-def classify(name, kset=K, l=5):
+def classify(name, kset=K, l=5, output=True):
     train = dataset.parse('data/' + name + '.train.csv')
 
-    visual.display_2d_dataset(train) # Display training data
+    if output:
+        visual.display_2d_dataset(train)  # Display training
+
     # instead of making a random partition we use parts of a shuffled array
     # this results in disjoint sets d_i (what would arbitrary sets imply?)
     np.random.shuffle(train)
@@ -73,7 +75,9 @@ def classify(name, kset=K, l=5):
     k_best_r = np.ones((len(kset), l))
 
     for n, k in enumerate(kset):
-        print("testing k =", k)
+        if output:
+            print("testing k =", k)
+
         for i, di in enumerate(dd):
             di_complement = np.concatenate(np.delete(dd, i, axis=0))
             r = R(di, stitch(f_naive(di_complement, di[:, 1:], k), di[:, 1:]))
@@ -84,20 +88,30 @@ def classify(name, kset=K, l=5):
 
     test = dataset.parse('data/' + name + '.test.csv')
 
-    visual.display_2d_dataset(test) # Display test data
+    if output:
+        visual.display_2d_dataset(test)  # Display test data
 
     compare = f_final(dd, test[:, 1:], k_best)
-    print("Failure rate (compared to test data):", R(test, stitch(compare, test[:, 1:])))
+    print('Failure rate (compared to test data):', R(test, stitch(compare, test[:, 1:])))
+    if output:
+        visual.display_2d_dataset(stitch(compare, test[:, 1:])) # Display guessed labels of test data
 
-    visual.display_2d_dataset(stitch(compare, test[:, 1:])) # Display guessed labels of test data
-
-    grid = [[n/100, m/100] for n in range(100) for m in range(100)]
-
-    visual.display_2d_dataset(stitch(f_final(dd, grid, k_best), grid)) # Display grid
+    # grid = [[n/100, m/100] for n in range(100) for m in range(100)]
+    # visual.display_2d_dataset(stitch(f_final(dd, grid, k_best), grid)) # Display grid
 
 
-classify('toy-2d')
+def classify_all(kset=K, l=5):
+    for data_file in dataset.datasets:
+        print('Running dataset', data_file, '...')
+        start_time = time.time()
+        classify(data_file, kset, l, output=False)
+        elapsed_time = time.time() - start_time
+        print('Elapsed time:', elapsed_time, '\n')
 
+
+# classify_all()
+
+classify('bananas-1-2d', K, 5)
 
 # debug statements
 # timeit.timeit("main.classify('bananas-1-4d')", "import main", number=1)
@@ -114,4 +128,3 @@ classify('toy-2d')
 # print("now", k_nearest_alt(dat, np.array([[1, 2], [0, 0], [1, 0]]), 10))
 # print(f_naive(dat, dat[:, 1:], 200))
 # print(R(stitch(f_naive(dat, dat[:, 1:], 15), dat[:, 1:]), dat)) # compares naive f to training data
-
