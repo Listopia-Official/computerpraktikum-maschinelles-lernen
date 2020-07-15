@@ -1,121 +1,171 @@
 Command line: main.py
-Total duration: 186.367s
+Total duration: 31.7174s
 File: main.py
-File duration: 8.47906s (4.55%)
+File duration: 0.610143s (1.92%)
 Line #|      Hits|         Time| Time per hit|      %|Source code
 ------+----------+-------------+-------------+-------+-----------
      1|         2|            0|            0|  0.00%|import numpy as np
-(call)|         1|      1.41032|      1.41032|  0.76%|# <frozen importlib._bootstrap>:978 _find_and_load
+(call)|         1|      1.45633|      1.45633|  4.59%|# <frozen importlib._bootstrap>:978 _find_and_load
      2|         1|            0|            0|  0.00%|import scipy.spatial as sp  # Is the library scipy allowed?
-(call)|         1|       1.3333|       1.3333|  0.72%|# <frozen importlib._bootstrap>:978 _find_and_load
+(call)|         1|      1.37131|      1.37131|  4.32%|# <frozen importlib._bootstrap>:978 _find_and_load
      3|         1|            0|            0|  0.00%|import dataset
-(call)|         1|   0.00500131|   0.00500131|  0.00%|# <frozen importlib._bootstrap>:978 _find_and_load
-     4|         1|            0|            0|  0.00%|import timeit
-(call)|         1|   0.00800157|   0.00800157|  0.00%|# <frozen importlib._bootstrap>:978 _find_and_load
-     5|         0|            0|            0|  0.00%|
-     6|         1|            0|            0|  0.00%|K = np.arange(50)
-     7|         0|            0|            0|  0.00%|
+(call)|         1|   0.00400066|   0.00400066|  0.01%|# <frozen importlib._bootstrap>:978 _find_and_load
+     4|         1|            0|            0|  0.00%|import time
+     5|         1|            0|            0|  0.00%|import visual
+(call)|         1|      12.0971|      12.0971| 38.14%|# <frozen importlib._bootstrap>:978 _find_and_load
+     6|         0|            0|            0|  0.00%|
+     7|         1|            0|            0|  0.00%|K = np.arange(50)
      8|         0|            0|            0|  0.00%|
-     9|         0|            0|            0|  0.00%|# returns failure rate of data2 compared to data1, parameters have to have same sorting and same shape
-    10|       251|   0.00300074|  1.19551e-05|  0.00%|def R(data1, data2):
-    11|       250|  0.000999928|  3.99971e-06|  0.00%|    n = len(data1)
-    12|       250|   0.00100064|  4.00257e-06|  0.00%|    if not n == len(data2):
-    13|         0|            0|            0|  0.00%|        return
-    14|         0|            0|            0|  0.00%|
-    15|       250|    0.0140018|  5.60074e-05|  0.01%|    f = n - np.count_nonzero(np.isclose(data1, data2).all(axis=1))
-(call)|       250|     0.239048|  0.000956191|  0.13%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\numeric.py:2431 isclose
-(call)|       250|    0.0200052|  8.00209e-05|  0.01%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\_methods.py:45 _all
-(call)|       250|   0.00600076|   2.4003e-05|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\numeric.py:406 count_nonzero
-    16|       250|            0|            0|  0.00%|    return f/n
-    17|         0|            0|            0|  0.00%|
+     9|         0|            0|            0|  0.00%|
+    10|         0|            0|            0|  0.00%|# returns failure rate of data2 compared to data1, parameters have to have same sorting and same shape
+    11|       252|   0.00500035|  1.98427e-05|  0.02%|def R(data1, data2):
+    12|       251|   0.00300145|   1.1958e-05|  0.01%|    n = len(data1)
+    13|       251|   0.00100064|  3.98662e-06|  0.00%|    if not n == len(data2):
+    14|         0|            0|            0|  0.00%|        return
+    15|         0|            0|            0|  0.00%|
+    16|       251|    0.0160086|  6.37793e-05|  0.05%|    f = n - np.count_nonzero(np.isclose(data1, data2).all(axis=1))
+(call)|       251|     0.229051|  0.000912553|  0.72%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\numeric.py:2431 isclose
+(call)|       251|    0.0150044|  5.97785e-05|  0.05%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\_methods.py:45 _all
+(call)|       251|   0.00399828|  1.59294e-05|  0.01%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\numeric.py:406 count_nonzero
+    17|       251|  0.000999928|  3.98377e-06|  0.00%|    return f / n
     18|         0|            0|            0|  0.00%|
-    19|         0|            0|            0|  0.00%|# return list of indices of nearest points
-    20|         0|            0|            0|  0.00%|# x is in array-shape
-    21|         1|            0|            0|  0.00%|def k_nearest(data, x, k):                          # very time consuming (~2.6 sec)
-    22|         0|            0|            0|  0.00%|    cen = np.repeat(data[:, 1:][:, np.newaxis, :], len(x), axis=1) - x  # (~0.6 sec)
-    23|         0|            0|            0|  0.00%|    sq = np.square(cen)                                                 # (~0.2 sec)
-    24|         0|            0|            0|  0.00%|    dist = np.sum(sq, axis=2)                                           # (~0.4 sec)
-    25|         0|            0|            0|  0.00%|    return np.argsort(dist, axis=0)[:k]                                 # (~1.4 sec)
-    26|         0|            0|            0|  0.00%|
+    19|         0|            0|            0|  0.00%|
+    20|         0|            0|            0|  0.00%|# return list of indices of nearest points
+    21|         0|            0|            0|  0.00%|# x is in array-shape
+    22|         6|            0|            0|  0.00%|def k_nearest(data, x, k_max):  # very time consuming
+    23|         5|            0|            0|  0.00%|    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
+(call)|         5|     0.486108|    0.0972216|  1.53%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\scipy\spatial\distance.py:2402 cdist
+    24|         5|            0|            0|  0.00%|    part_indx = np.argpartition(dist, k_max, axis=0)[:k_max]
+(call)|         5|      2.08047|     0.416094|  6.56%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:742 argpartition
+    25|         5|            0|            0|  0.00%|    sort_indx = np.argsort(np.take_along_axis(dist, part_indx, axis=0), axis=0)
+(call)|         5|    0.0210061|   0.00420122|  0.07%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:59 take_along_axis
+(call)|         5|    0.0170028|   0.00340056|  0.05%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:942 argsort
+    26|         5|            0|            0|  0.00%|    return np.take_along_axis(part_indx, sort_indx, axis=0)  # (~1.4 sec)
+(call)|         5|   0.00600076|   0.00120015|  0.02%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:59 take_along_axis
     27|         0|            0|            0|  0.00%|
-    28|       255|   0.00300217|  1.17732e-05|  0.00%|def k_nearest_alt(data, x, k):
-    29|       254|   0.00100088|  3.94048e-06|  0.00%|    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')             # (~0.1 sec)
-(call)|       254|      28.2499|      0.11122| 15.16%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\scipy\spatial\distance.py:2402 cdist
-    30|       254|   0.00499988|  1.96846e-05|  0.00%|    return np.argpartition(dist, k, axis=0)[:k]                         # (~0.5 sec)
-(call)|       254|      106.584|     0.419624| 57.19%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:742 argpartition
-    31|         0|            0|            0|  0.00%|
+    28|         0|            0|            0|  0.00%|
+    29|         6|   0.00100064|  0.000166774|  0.00%|def k_nearest_alt(data, x, k):
+    30|         5|            0|            0|  0.00%|    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
+(call)|         5|      1.07824|     0.215649|  3.40%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\scipy\spatial\distance.py:2402 cdist
+    31|         5|            0|            0|  0.00%|    return np.argpartition(dist, k, axis=0)[:k]  # (~0.5 sec)
+(call)|         5|      4.26896|     0.853792| 13.46%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:742 argpartition
     32|         0|            0|            0|  0.00%|
-    33|         0|            0|            0|  0.00%|# computes f_D,k for given x values
-    34|       255|   0.00200009|   7.8435e-06|  0.00%|def f_naive(data, x, k):
-    35|       254|      3.34102|    0.0131536|  1.79%|    near = k_nearest_alt(data, x, k)  # using k_nearest_alt because it is faster
-(call)|       254|      134.843|     0.530879| 72.35%|# main.py:28 k_nearest_alt
-    36|       254|    0.0110025|  4.33171e-05|  0.01%|    y = data[:, :1]
-    37|       254|      3.32456|    0.0130888|  1.78%|    nearest_bin = np.take_along_axis(np.repeat(y, len(x), axis=1), near, axis=0)
-(call)|       254|      32.7054|     0.128761| 17.55%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:429 repeat
-(call)|       253|      0.65015|   0.00256976|  0.35%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:59 take_along_axis
-    38|       253|    0.0110023|  4.34874e-05|  0.01%|    result = np.sign(np.sum(nearest_bin, axis=0))
-(call)|       253|    0.0700028|  0.000276691|  0.04%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:1966 sum
-    39|       253|   0.00500107|  1.97671e-05|  0.00%|    result[result == 0] = 1  # sets sign(0) to 1
-    40|       253|   0.00200009|  7.90551e-06|  0.00%|    return result
-    41|         0|            0|            0|  0.00%|
-    42|         0|            0|            0|  0.00%|
-    43|         0|            0|            0|  0.00%|# computes final f_D for given x values and k*
-    44|         2|            0|            0|  0.00%|def f_final(data_segmented, x, k):
-    45|         1|            0|            0|  0.00%|    tmp = np.zeros(len(x))
+    33|         0|            0|            0|  0.00%|
+    34|         0|            0|            0|  0.00%|# computes f_D,k for given x value for k in array shape
+    35|         6|            0|            0|  0.00%|def f_naive(data, x, kset):
+    36|         5|     0.100024|    0.0200047|  0.32%|    near = k_nearest(data, x, np.max(kset))  # using k_nearest to only compute it once
+(call)|         5|   0.00100064|  0.000200129|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:2397 amax
+(call)|         5|      2.61059|     0.522117|  8.23%|# main.py:22 k_nearest
+    37|         5|            0|            0|  0.00%|    y = data[:, :1]
+    38|         5|     0.072017|    0.0144034|  0.23%|    nearest_bin = np.take_along_axis(np.repeat(y, len(x), axis=1), near, axis=0)
+(call)|         5|     0.651148|      0.13023|  2.05%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:429 repeat
+(call)|         5|    0.0240066|   0.00480132|  0.08%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:59 take_along_axis
+    39|         5|            0|            0|  0.00%|    results = []
+    40|       255|            0|            0|  0.00%|    for k in kset:
+    41|       250|    0.0109999|  4.39997e-05|  0.03%|        result = np.sign(np.sum(nearest_bin[:k], axis=0))
+(call)|       250|    0.0380077|  0.000152031|  0.12%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:1966 sum
+    42|       250|   0.00300097|  1.20039e-05|  0.01%|        result[result == 0] = 1  # sets sign(0) to 1
+    43|       250|   0.00200081|  8.00323e-06|  0.01%|        results.append(result)
+    44|         5|            0|            0|  0.00%|    return results
+    45|         0|            0|            0|  0.00%|
     46|         0|            0|            0|  0.00%|
-    47|         4|            0|            0|  0.00%|    for i, di in enumerate(data_segmented):
-    48|         4|  0.000999928|  0.000249982|  0.00%|        di_complement = np.concatenate(np.delete(data_segmented, i, axis=0))
-(call)|         4|   0.00300097|  0.000750244|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\function_base.py:4220 delete
-    49|         4|    0.0420108|    0.0105027|  0.02%|        tmp = tmp + f_naive(di_complement, x, k)
-(call)|         4|      5.50024|      1.37506|  2.95%|# main.py:34 f_naive
-    50|         0|            0|            0|  0.00%|
-    51|         0|            0|            0|  0.00%|    result = np.sign(tmp)
-    52|         0|            0|            0|  0.00%|    result[result == 0] = 1  # sets sign(0) to 1
-    53|         0|            0|            0|  0.00%|    return result
-    54|         0|            0|            0|  0.00%|
+    47|         0|            0|            0|  0.00%|# computes f_D,k for given x values
+    48|         6|            0|            0|  0.00%|def f_naive_alt(data, x, k):
+    49|         5|     0.140031|    0.0280061|  0.44%|    near = k_nearest_alt(data, x, k)  # using k_nearest_alt because it is faster
+(call)|         5|      5.34821|      1.06964| 16.86%|# main.py:29 k_nearest_alt
+    50|         5|            0|            0|  0.00%|    y = data[:, :1]
+    51|         5|     0.148033|    0.0296067|  0.47%|    nearest_bin = np.take_along_axis(np.repeat(y, len(x), axis=1), near, axis=0)
+(call)|         5|      1.38931|     0.277862|  4.38%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:429 repeat
+(call)|         5|     0.037009|    0.0074018|  0.12%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:59 take_along_axis
+    52|         5|            0|            0|  0.00%|    result = np.sign(np.sum(nearest_bin, axis=0))
+(call)|         5|   0.00200105|  0.000400209|  0.01%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:1966 sum
+    53|         5|            0|            0|  0.00%|    result[result == 0] = 1  # sets sign(0) to 1
+    54|         5|            0|            0|  0.00%|    return result
     55|         0|            0|            0|  0.00%|
-    56|         0|            0|            0|  0.00%|# stitches calculated y-values to the coordinates
-    57|       251|   0.00399995|   1.5936e-05|  0.00%|def stitch(y, x):
-    58|       250|   0.00600266|  2.40107e-05|  0.00%|    data = np.hstack((y[:, np.newaxis], x))
-(call)|       250|    0.0920196|  0.000368078|  0.05%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\shape_base.py:286 hstack
-    59|       250|   0.00300145|  1.20058e-05|  0.00%|    return data
+    56|         0|            0|            0|  0.00%|
+    57|         0|            0|            0|  0.00%|# computes final f_D for given x values and k*
+    58|         2|  0.000999928|  0.000499964|  0.00%|def f_final(data_segmented, x, k):
+    59|         1|            0|            0|  0.00%|    tmp = np.zeros(len(x))
     60|         0|            0|            0|  0.00%|
-    61|         0|            0|            0|  0.00%|
-    62|         2|            0|            0|  0.00%|def classify(name, kset=K, l=5):
-    63|         1|            0|            0|  0.00%|    train = dataset.parse('data/' + name + '.train.csv')
-(call)|         1|      4.49401|      4.49401|  2.41%|# C:\Users\rapha\PycharmProjects\computerpraktikum-maschinelles-lernen\dataset.py:11 parse
-    64|         0|            0|            0|  0.00%|    # instead of making a random partition we use parts of a shuffled array
-    65|         0|            0|            0|  0.00%|    # this results in disjoint sets d_i (what would arbitrary sets imply?)
-    66|         1|    0.0150037|    0.0150037|  0.01%|    np.random.shuffle(train)
-    67|         0|            0|            0|  0.00%|    # this way we have d_i = dd[i]
-    68|         1|            0|            0|  0.00%|    dd = np.array_split(train, l)
-(call)|         1|            0|            0|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:715 array_split
+    61|         6|  0.000999689|  0.000166615|  0.00%|    for i, di in enumerate(data_segmented):
+    62|         5|            0|            0|  0.00%|        di_complement = np.concatenate(np.delete(data_segmented, i, axis=0))
+(call)|         5|   0.00100017|  0.000200033|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\function_base.py:4220 delete
+    63|         5|    0.0720167|    0.0144033|  0.23%|        tmp = tmp + f_naive_alt(di_complement, x, k)
+(call)|         5|      7.06459|      1.41292| 22.27%|# main.py:48 f_naive_alt
+    64|         0|            0|            0|  0.00%|
+    65|         1|            0|            0|  0.00%|    result = np.sign(tmp)
+    66|         1|            0|            0|  0.00%|    result[result == 0] = 1  # sets sign(0) to 1
+    67|         1|            0|            0|  0.00%|    return result
+    68|         0|            0|            0|  0.00%|
     69|         0|            0|            0|  0.00%|
-    70|         1|            0|            0|  0.00%|    k_best_r = np.ones((len(kset), l))
-(call)|         1|    0.0010004|    0.0010004|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\numeric.py:175 ones
-    71|         0|            0|            0|  0.00%|
-    72|        51|  0.000999928|  1.96064e-05|  0.00%|    for n, k in enumerate(kset):
-    73|        50|    0.0110285|  0.000220571|  0.01%|        print("testing k =", k)
-    74|       300|   0.00500226|  1.66742e-05|  0.00%|        for i, di in enumerate(dd):
-    75|       250|    0.0140026|  5.60102e-05|  0.01%|            di_complement = np.concatenate(np.delete(dd, i, axis=0))
-(call)|       250|    0.0850215|  0.000340086|  0.05%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\function_base.py:4220 delete
-    76|       250|      1.64941|   0.00659765|  0.89%|            r = R(di, stitch(f_naive(di_complement, di[:, 1:], k), di[:, 1:]))
-(call)|       250|      169.465|     0.677861| 90.93%|# main.py:34 f_naive
-(call)|       250|     0.105024|  0.000420094|  0.06%|# main.py:57 stitch
-(call)|       250|     0.284057|   0.00113623|  0.15%|# main.py:10 R
-    77|       250|    0.0030005|   1.2002e-05|  0.00%|            k_best_r[n][i] = r
+    70|         0|            0|            0|  0.00%|# stitches calculated y-values to the coordinates
+    71|       252|   0.00199986|  7.93593e-06|  0.01%|def stitch(y, x):
+    72|       251|   0.00200081|  7.97135e-06|  0.01%|    data = np.hstack((y[:, np.newaxis], x))
+(call)|       251|    0.0780156|  0.000310819|  0.25%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\shape_base.py:286 hstack
+    73|       251|   0.00199962|   7.9666e-06|  0.01%|    return data
+    74|         0|            0|            0|  0.00%|
+    75|         0|            0|            0|  0.00%|
+    76|         2|            0|            0|  0.00%|def classify(name, kset=K, l=5, output=True):
+    77|         1|            0|            0|  0.00%|    train = dataset.parse('data/' + name + '.train.csv')
+(call)|         1|      4.05658|      4.05658| 12.79%|# C:\Users\rapha\PycharmProjects\computerpraktikum-maschinelles-lernen\dataset.py:11 parse
     78|         0|            0|            0|  0.00%|
-    79|         1|            0|            0|  0.00%|    k_best = K[np.argmin(np.mean(k_best_r, axis=1))]
+    79|         1|            0|            0|  0.00%|    if output:
+    80|         0|            0|            0|  0.00%|        visual.display_2d_dataset(train)  # Display training
+    81|         0|            0|            0|  0.00%|
+    82|         0|            0|            0|  0.00%|    # instead of making a random partition we use parts of a shuffled array
+    83|         0|            0|            0|  0.00%|    # this results in disjoint sets d_i (what would arbitrary sets imply?)
+    84|         1|     0.014003|     0.014003|  0.04%|    np.random.shuffle(train)
+    85|         0|            0|            0|  0.00%|    # this way we have d_i = dd[i]
+    86|         1|            0|            0|  0.00%|    dd = np.array_split(train, l)
+(call)|         1|   0.00124025|   0.00124025|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\shape_base.py:715 array_split
+    87|         0|            0|            0|  0.00%|
+    88|         1|            0|            0|  0.00%|    k_best_r = np.ones((l, len(kset)))
+(call)|         1|            0|            0|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\numeric.py:175 ones
+    89|         0|            0|            0|  0.00%|
+    90|         6|   0.00100064|  0.000166774|  0.00%|    for i, di in enumerate(dd):
+    91|         5|            0|            0|  0.00%|        di_complement = np.concatenate(np.delete(dd, i, axis=0))
+(call)|         5|   0.00297475|   0.00059495|  0.01%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\lib\function_base.py:4220 delete
+    92|         0|            0|            0|  0.00%|
+    93|       255|    0.0040009|  1.56898e-05|  0.01%|        for n, f in enumerate(f_naive(di_complement, di[:, 1:], kset)):
+(call)|         5|      3.51279|     0.702558| 11.08%|# main.py:35 f_naive
+    94|       250|   0.00700426|   2.8017e-05|  0.02%|            k_best_r[i][n] = R(di, stitch(f, di[:, 1:]))
+(call)|       250|    0.0830159|  0.000332064|  0.26%|# main.py:71 stitch
+(call)|       250|     0.273064|   0.00109226|  0.86%|# main.py:11 R
+    95|         0|            0|            0|  0.00%|
+    96|         1|            0|            0|  0.00%|    k_best = K[np.argmin(np.mean(k_best_r, axis=0))]
 (call)|         1|            0|            0|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:3014 mean
 (call)|         1|            0|            0|  0.00%|# c:\users\rapha\appdata\local\programs\python\python37-32\lib\site-packages\numpy\core\fromnumeric.py:1110 argmin
-    80|         1|            0|            0|  0.00%|    print('k* =', k_best)
-    81|         0|            0|            0|  0.00%|
-    82|         1|            0|            0|  0.00%|    test = dataset.parse('data/' + name + '.test.csv')
-(call)|         1|      1.93144|      1.93144|  1.04%|# C:\Users\rapha\PycharmProjects\computerpraktikum-maschinelles-lernen\dataset.py:11 parse
-    83|         1|            0|            0|  0.00%|    compare = f_final(dd, test[:, 1:], k_best)
-(call)|         1|      5.54625|      5.54625|  2.98%|# main.py:44 f_final
-    84|         0|            0|            0|  0.00%|    print("Failure rate (compared to test data):", R(test, stitch(compare, test[:, 1:])))
-    85|         0|            0|            0|  0.00%|
-    86|         0|            0|            0|  0.00%|
-    87|         1|            0|            0|  0.00%|classify('bananas-1-4d')
-(call)|         1|       183.61|       183.61| 98.52%|# main.py:62 classify
+    97|         1|  0.000999451|  0.000999451|  0.00%|    print('k* =', k_best)
+    98|         0|            0|            0|  0.00%|
+    99|         1|            0|            0|  0.00%|    test = dataset.parse('data/' + name + '.test.csv')
+(call)|         1|      1.69038|      1.69038|  5.33%|# C:\Users\rapha\PycharmProjects\computerpraktikum-maschinelles-lernen\dataset.py:11 parse
+   100|         0|            0|            0|  0.00%|
+   101|         1|            0|            0|  0.00%|    if output:
+   102|         0|            0|            0|  0.00%|        visual.display_2d_dataset(test)  # Display test data
+   103|         0|            0|            0|  0.00%|
+   104|         1|            0|            0|  0.00%|    compare = f_final(dd, test[:, 1:], k_best)
+(call)|         1|      7.13861|      7.13861| 22.51%|# main.py:58 f_final
+   105|         1|            0|            0|  0.00%|    print('Failure rate (compared to test data):', R(test, stitch(compare, test[:, 1:])))
+(call)|         1|  0.000999928|  0.000999928|  0.00%|# main.py:71 stitch
+(call)|         1|   0.00100017|   0.00100017|  0.00%|# main.py:11 R
+   106|         1|            0|            0|  0.00%|    if output:
+   107|         0|            0|            0|  0.00%|        visual.display_2d_dataset(stitch(compare, test[:, 1:]))  # Display guessed labels of test data
+   108|         0|            0|            0|  0.00%|
+   109|         0|            0|            0|  0.00%|    # grid = [[n/100, m/100] for n in range(100) for m in range(100)]
+   110|         0|            0|            0|  0.00%|    # visual.display_2d_dataset(stitch(f_final(dd, grid, k_best), grid)) # Display grid
+   111|         0|            0|            0|  0.00%|
+   112|         0|            0|            0|  0.00%|
+   113|         1|            0|            0|  0.00%|def classify_all(kset=K, l=5):
+   114|         0|            0|            0|  0.00%|    for data_file in dataset.datasets:
+   115|         0|            0|            0|  0.00%|        print('Running dataset', data_file, '...')
+   116|         0|            0|            0|  0.00%|        start_time = time.time()
+   117|         0|            0|            0|  0.00%|        classify(data_file, kset, l, output=False)
+   118|         0|            0|            0|  0.00%|        elapsed_time = time.time() - start_time
+   119|         0|            0|            0|  0.00%|        print('Elapsed time:', elapsed_time, '\n')
+   120|         0|            0|            0|  0.00%|
+   121|         0|            0|            0|  0.00%|
+   122|         0|            0|            0|  0.00%|# classify_all()
+   123|         0|            0|            0|  0.00%|
+   124|         1|            0|            0|  0.00%|classify('bananas-1-2d', K, 5, output=False)
+(call)|         1|      16.7877|      16.7877| 52.93%|# main.py:76 classify
+   125|         0|            0|            0|  0.00%|

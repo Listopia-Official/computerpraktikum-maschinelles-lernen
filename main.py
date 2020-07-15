@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.spatial as sp  # Is the library scipy allowed?
+# import scipy.spatial as sp - scipy not allowed
 import dataset
 import time
 import visual
@@ -19,15 +19,20 @@ def R(data1, data2):
 
 # return list of indices of nearest points
 # x is in array-shape
-def k_nearest(data, x, k_max):  # very time consuming
-    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
+def k_nearest(data, x, k_max):
+    # dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec) scipy library not allowed
+    cen = np.repeat(data[:, 1:][:, np.newaxis, :], len(x), axis=1) - x  # (~0.6 sec)
+    sq = np.square(cen)  # (~0.2 sec)
+    dist = np.sum(sq, axis=2)
     part_indx = np.argpartition(dist, k_max, axis=0)[:k_max]
     sort_indx = np.argsort(np.take_along_axis(dist, part_indx, axis=0), axis=0)
     return np.take_along_axis(part_indx, sort_indx, axis=0)  # (~1.4 sec)
 
 
 def k_nearest_alt(data, x, k):
-    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
+    cen = np.repeat(data[:, 1:][:, np.newaxis, :], len(x), axis=1) - x  # (~0.6 sec)
+    sq = np.square(cen)  # (~0.2 sec)
+    dist = np.sum(sq, axis=2)
     return np.argpartition(dist, k, axis=0)[:k]  # (~0.5 sec)
 
 
