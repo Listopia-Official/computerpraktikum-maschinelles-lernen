@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.spatial as sp  # Is the library scipy allowed?
 import dataset
+import visual
 import timeit
 
 K = np.arange(50)
@@ -61,6 +62,8 @@ def stitch(y, x):
 
 def classify(name, kset=K, l=5):
     train = dataset.parse('data/' + name + '.train.csv')
+
+    visual.display_2d_dataset(train) # Display training data
     # instead of making a random partition we use parts of a shuffled array
     # this results in disjoint sets d_i (what would arbitrary sets imply?)
     np.random.shuffle(train)
@@ -80,11 +83,20 @@ def classify(name, kset=K, l=5):
     print('k* =', k_best)
 
     test = dataset.parse('data/' + name + '.test.csv')
+
+    visual.display_2d_dataset(test) # Display test data
+
     compare = f_final(dd, test[:, 1:], k_best)
     print("Failure rate (compared to test data):", R(test, stitch(compare, test[:, 1:])))
 
+    visual.display_2d_dataset(stitch(compare, test[:, 1:])) # Display guessed labels of test data
 
-classify('bananas-1-4d')
+    grid = [[n/100, m/100] for n in range(100) for m in range(100)]
+
+    visual.display_2d_dataset(stitch(f_final(dd, grid, k_best), grid)) # Display grid
+
+
+classify('toy-2d')
 
 
 # debug statements
