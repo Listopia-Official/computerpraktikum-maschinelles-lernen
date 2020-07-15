@@ -19,9 +19,11 @@ def R(data1, data2):
 
 # return list of indices of nearest points
 # x is in array-shape
-def k_nearest(data, x):  # very time consuming
+def k_nearest(data, x, k_max):  # very time consuming
     dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
-    return np.argsort(dist, axis=0)  # (~1.4 sec)
+    part_indx = np.argpartition(dist, k_max, axis=0)[:k_max]
+    sort_indx = np.argsort(np.take_along_axis(dist, part_indx, axis=0), axis=0)
+    return np.take_along_axis(part_indx, sort_indx, axis=0)  # (~1.4 sec)
 
 
 def k_nearest_alt(data, x, k):
@@ -31,7 +33,7 @@ def k_nearest_alt(data, x, k):
 
 # computes f_D,k for given x value for k in array shape
 def f_naive(data, x, kset):
-    near = k_nearest(data, x)  # using k_nearest to only compute it once
+    near = k_nearest(data, x, np.max(kset))  # using k_nearest to only compute it once
     y = data[:, :1]
     nearest_bin = np.take_along_axis(np.repeat(y, len(x), axis=1), near, axis=0)
     results = []
