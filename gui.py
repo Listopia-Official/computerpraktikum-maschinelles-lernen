@@ -187,7 +187,7 @@ class Gui:
         start_time = time.time()
 
         # Actually run the algorithm with the parameters from the GUI
-        k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
+        k_best, f_rate, self.result_data, dd = self.classify_function(self.train_data, self.test_data, output_path,
                                                                   kset=np.arange(self.k_slider.get()),
                                                                   l=self.l_slider.get(), algorithm=self.algorithm_combobox.get())
 
@@ -236,7 +236,7 @@ class Gui:
             start_time = time.time()
 
             # Execute per dataset
-            k_best, f_rate, self.result_data = self.classify_function(train_data, test_data, output_path,
+            k_best, f_rate, self.result_data, dd = self.classify_function(train_data, test_data, output_path,
                                                                       kset=kset_val,
                                                                       l=l_val,
                                                                       algorithm = algorithm_val)
