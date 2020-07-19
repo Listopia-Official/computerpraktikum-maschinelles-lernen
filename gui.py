@@ -12,6 +12,7 @@ import dataset
 import numpy as np
 import sys
 
+
 class Gui:
 
     def __init__(self, classify_function):
@@ -94,7 +95,6 @@ class Gui:
     def show(self):
         self.frame.mainloop()
 
-
     def select_data(self):
         chosen_dir = filedialog.askdirectory()
 
@@ -107,7 +107,6 @@ class Gui:
         self.populate_datasets()
 
     def validate_data_dir(self, widget, mode, validator):
-
 
         return False
 
@@ -126,7 +125,6 @@ class Gui:
             self.dataset_combobox.set(data_values[0])
         else:
             self.dataset_combobox.set("")
-
 
     def train(self):
         if len(self.dataset_combobox['values']) == 0:
