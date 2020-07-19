@@ -1,18 +1,18 @@
 import numpy as np
 
-datasets = ['australian', 'bananas-1-2d', 'bananas-1-4d', 'bananas-2-2d', 'bananas-2-4d',
-            'bananas-5-2d', 'bananas-5-4d', 'cod-rna.5000', 'crosses-2d', 'ijcnn1.5000', 'ijcnn1.10000', 'ijcnn1',
-            'svmguide1', 'toy-2d', 'toy-3d', 'toy-4d', 'toy-10d']
+"""
+This is the (small) module for handling importing and exporting the datasets.
+"""
 
-
-# generates array of shape (n, 1 + dim)
-# y-values are accessible with d[:,:1]
-# x-values are accessible with d[:,1:]
+"""
+Parses the file at the specified path and returns the data in the following format:
+ - It's an array of shape (n, 1 + dim)
+ - y-values are accessible with d[:,:1] (2D-case, analogous for higher dimensions)
+ - x-values are accessible with d[:,1:] (2D-case)
+"""
 def parse(path):
-    d = np.genfromtxt(path, delimiter=',')
+    return np.genfromtxt(path, delimiter=',')
 
-    return d
-
-
+# Saves the specified dataset to the specified path
 def save_to_file(path, data):
     np.savetxt(path, data, fmt='%g', delimiter=', ')
