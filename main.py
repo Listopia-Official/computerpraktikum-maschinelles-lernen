@@ -124,11 +124,12 @@ def test(dd, name, k_best,  output):
     if output:
         visual.display_2d_dataset(test_data, 'raw testing data')  # Display test data
     compare = f_final(dd, test_data[:, 1:], k_best)
-    f_rate = R(test_data, stitch(compare, test_data[:, 1:]))
+    result_data = stitch(compare, test_data[:, 1:])
+    f_rate = R(test_data, result_data)
     print('Failure rate (compared to test data):', f_rate)
-
+    dataset.save_to_file('data/' + name + '.result.csv', result_data)
     if output:
-        visual.display_2d_dataset(stitch(compare, test_data[:, 1:]), 'f evaluated to testing data')
+        visual.display_2d_dataset(result_data, 'f evaluated to testing data')
         # Display result labels of test data
 
     return f_rate
@@ -190,7 +191,7 @@ def classify_all(kset=K, l=5):
 
 # classify_all()
 
-# classify('bananas-1-2d', K, 5)
+classify('bananas-1-2d', K, 5)
 
 # debug statements
 

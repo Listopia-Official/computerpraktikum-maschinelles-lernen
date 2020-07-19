@@ -14,5 +14,5 @@ def parse(path):
     return d
 
 
-def save_to_file(path):
-    pass  # TODO add save functionality
+def save_to_file(path, data):
+    np.savetxt(path, data, fmt='%g', delimiter=', ')
