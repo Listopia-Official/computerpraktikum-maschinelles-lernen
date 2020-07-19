@@ -123,7 +123,7 @@ class Gui:
 
         for file in os.listdir(data_dir):
             if os.path.isfile(os.path.join(data_dir, file)) and file.endswith(".csv"):
-                data_values.append(os.path.splitext(file)[0].split(".")[0])
+                data_values.append(os.path.splitext(file)[0].rsplit(".", 1)[0])
 
         self.dataset_combobox['values'] = np.unique(np.array(data_values)).tolist()
 
