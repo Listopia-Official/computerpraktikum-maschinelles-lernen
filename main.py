@@ -214,7 +214,9 @@ def test_k_d_tree(d_trees, test_data, k_best, output_path):
 
     return f_rate, result_data
 
-
+"""
+The classify-function implemented as specified in the exercise instructions - we use a more dynamic version for the GUI.
+"""
 def classify(name, kset=K, l=5, algo='brute_sort'):
     train_data = dataset.parse('data/' + name + '.train.csv')
     test_data = dataset.parse('data/' + name + '.test.csv')
