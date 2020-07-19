@@ -55,7 +55,7 @@ def knn(data_tree, point, k, depth=0):
     # we also have to take that into account
     if np.max(dist) > (point[axis] - data_tree[1][axis + 1]) ** 2:
         best_k2, dist2 = knn(opposite_branch, point, k, depth + 1)
-        if best_k2:  # skip instantly if empty
+        if len(best_k2) != 0:  # skip instantly if empty
             dist = np.concatenate((dist, dist2), axis=0)
             indx = np.argpartition(dist, k)[:k]
             tmp = np.concatenate((best_k, best_k2))

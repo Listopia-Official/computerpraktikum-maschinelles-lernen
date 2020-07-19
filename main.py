@@ -123,12 +123,12 @@ def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-s
         dd, k_best = train_brute_sort(train_data, kset, l)
         print('k* =', k_best)
         f_rate, result_data = test(dd, test_data, k_best, output_path)
-        return k_best, f_rate, result_data
+        return k_best, f_rate, result_data, dd
     elif algorithm == 'k-d_tree':
         dd, k_best = train_k_d_tree(train_data, kset, l)
         print('k* =', k_best)
         f_rate, result_data = test_k_d_tree(dd, test_data, k_best, output_path)
-        return k_best, f_rate, result_data
+        return k_best, f_rate, result_data, dd
     elif algorithm == 'sklearn':  # Comparing with existing implementation
         sk_classifier = KNeighborsClassifier(n_neighbors=np.max(K))
         bool_y = np.copy(train_data[:, 0])
