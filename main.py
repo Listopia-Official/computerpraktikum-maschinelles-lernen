@@ -105,14 +105,11 @@ def stitch(y, x):
     return data
 
 
-def classify(name, kset=K, l=5, output=True):
-    dd, k_best = train_brute_sort(name, kset, l, output)
+def classify(train_data, test_data, output_path, kset=K, l=5):
+    dd, k_best = train_brute_sort(train_data, kset, l)
     print('k* =', k_best)
 
-    test(dd, name, k_best, output)
-
-    if False and output:  # only work in 2 dimensions
-        grid(dd, k_best)
+    return test(dd, test_data, k_best, output_path)
 
 
 def grid(dd, k_best):
@@ -120,27 +117,17 @@ def grid(dd, k_best):
     visual.display_2d_dataset(stitch(f_final(dd, grid_x, k_best), grid_x), 'f evaluated to grid')  # Display grid
 
 
-def test(dd, name, k_best,  output):
-    test_data = dataset.parse('data/' + name + '.test.csv')
-    if output:
-        visual.display_2d_dataset(test_data, 'raw testing data')  # Display test data
+def test(dd, test_data, k_best,  output_path):
     compare = f_final(dd, test_data[:, 1:], k_best)
     result_data = stitch(compare, test_data[:, 1:])
     f_rate = R(test_data, result_data)
     print('Failure rate (compared to test data):', f_rate)
-    dataset.save_to_file('data/' + name + '.result.csv', result_data)
-    if output:
-        visual.display_2d_dataset(result_data, 'f evaluated to testing data')
-        # Display result labels of test data
+    dataset.save_to_file(output_path, result_data)
 
-    return f_rate
+    return f_rate, result_data
 
 
-def train_brute_sort(name, kset, l, output):
-    train_data = dataset.parse('data/' + name + '.train.csv')
-    if output:
-        visual.display_2d_dataset(train_data, 'raw training data')  # Display training data
-
+def train_brute_sort(train_data, kset, l):
     # instead of making a random partition we use parts of a shuffled array
     # this results in disjoint sets d_i
     np.random.shuffle(train_data)
@@ -180,24 +167,5 @@ def train_k_d_tree(name, kset, l, output):
     k_best = K[np.argmin(np.mean(k_best_r, axis=0))]
     return dd, k_best
 
-
-def classify_all(kset=K, l=5):
-    for data_file in dataset.datasets:
-        print('Running dataset', data_file, '...')
-        start_time = time.time()
-        classify(data_file, kset, l, output=False)
-        elapsed_time = time.time() - start_time
-        print('Elapsed time:', elapsed_time, '\n')
-
-
-#classify_all()
-
-classify('bananas-1-2d', K, 5)
-
-# debug statements
-
-# d, k = train_k_d_tree('australian', K, 5, False)
-# print(k)
-
-gui = Gui()
+gui = Gui(classify)
 gui.show()

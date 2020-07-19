@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import filedialog
 from tkinter import ttk
 from tkinter import messagebox
+import matplotlib as plt
 import collections
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import os
@@ -12,7 +13,9 @@ import numpy as np
 
 class Gui:
 
-    def __init__(self):
+    def __init__(self, classify_function):
+
+        self.classify_function = classify_function
 
         # UI components
         self.frame = Tk()
@@ -35,7 +38,9 @@ class Gui:
 
         self.train_button = Button(self.frame, text = "Train", command = self.train, width = 110)
 
-        #self.plot = FigureCanvasTkAgg(visual.display_2d_dataset(dataset.parse('data/bananas-2-2d.test.csv'), "ere"), master=self.frame)
+        self.train_data_label = Label(self.frame, text="Training data:")
+        self.test_data_label = Label(self.frame, text="Test data:")
+        self.result_data_label = Label(self.frame, text="Result data:")
 
         self.data_folder_textfield.configure(state=tk.NORMAL)
         self.data_folder_textfield.insert(0, os.path.abspath("./data")) # Default data dir
@@ -60,9 +65,11 @@ class Gui:
         self.l_label.grid(column=0, row=6, padx=5, pady=2)
         self.l_slider.grid(column=0, row=7, padx=10, pady=2)
 
-        #self.plot._tkcanvas.grid(column=0, row=7, padx=10, pady=2)
-
         self.train_button.grid(column = 0,columnspan = 2, row = 8, padx = 10, pady = 2)
+
+        self.train_data_label.grid(column = 0, row = 9, padx = 10, pady = 2)
+        self.test_data_label.grid(column=1, row=9, padx=10, pady=2)
+        self.result_data_label.grid(column=2, row=9, padx=10, pady=2)
 
     def show(self):
         self.frame.mainloop()
@@ -104,3 +111,42 @@ class Gui:
     def train(self):
         if len(self.dataset_combobox['values']) == 0:
             messagebox.showerror("Error:", "No dataset was selected.")
+            return
+
+        dataset_name = self.dataset_combobox.get()
+        data_dir = self.data_folder_textfield.get()
+
+        train_data = dataset.parse(data_dir + "/" + dataset_name + ".train.csv")
+        test_data = dataset.parse(data_dir + "/" + dataset_name + ".test.csv")
+
+        output_path = data_dir + "/" + dataset_name + ".result.csv"
+
+        self.train_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(train_data, "Training data:"), master=self.frame)
+        self.test_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(test_data, "Test data:"),
+                                                 master=self.frame)
+
+        self.train_data_plot._tkcanvas.grid(column = 0, row = 10, padx = 10, pady = 2)
+        self.test_data_plot._tkcanvas.grid(column=1, row=10, padx=10, pady=2)
+
+        f_rate, result_data = self.classify_function(train_data, test_data, output_path, kset=np.arange(self.k_slider.get()), l=self.l_slider.get())
+
+        self.result_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(result_data, "Result data:"),
+                                                  master=self.frame)
+
+        self.result_data_plot._tkcanvas.grid(column=2, row=10, padx=10, pady=2)
+
+
+
+
+
+    #dataset.parse('data/' + name + '.train.csv')
+
+    #def classify_all(kset=K, l=5):
+    #    for data_file in dataset.datasets:
+     #       print('Running dataset', data_file, '...')
+    #        start_time = time.time()
+        #    classify(data_file, kset, l, output=False)
+       #     elapsed_time = time.time() - start_time
+         #   print('Elapsed time:', elapsed_time, '\n')
+
+    # classify_all()
