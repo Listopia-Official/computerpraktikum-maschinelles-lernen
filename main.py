@@ -9,7 +9,7 @@ from gui import *
 ARRAY_LIMIT = 50000     # lower if memory errors occur; splits the large arrays if they are too large
 # equally important is using the 64-bit version of python
 
-K = np.arange(50)
+K = np.arange(1, 5)
 
 
 # returns failure rate of data2 compared to data1, parameters have to have same sorting and same shape
@@ -86,6 +86,16 @@ def f_train_tree(data_tree, x, kset):
     return results
 
 
+# computes f_D,k for given x values for k in array shape with k-d tree
+def f_test_tree(data_tree, x, k):
+    near_data, dist = k_d_tree.knn(data_tree, x, k)
+
+    result = np.sign(np.sum(near_data[:, 0]))
+    if result == 0:
+        result = 1
+    return result
+
+
 # computes final f_D for given x values and k*
 def f_final(data_segmented, x, k):
     tmp = np.zeros(len(x))
@@ -105,11 +115,15 @@ def stitch(y, x):
     return data
 
 
-def classify(train_data, test_data, output_path, kset=K, l=5):
-    dd, k_best = train_brute_sort(train_data, kset, l)
-    print('k* =', k_best)
-
-    return test(dd, test_data, k_best, output_path)
+def classify(train_data, test_data, output_path, kset=K, l=5, brute_sort=True):
+    if brute_sort:
+        dd, k_best = train_brute_sort(train_data, kset, l)
+        print('k* =', k_best)
+        return test(dd, test_data, k_best, output_path)
+    else:
+        dd, k_best = train_k_d_tree(train_data, kset, l)
+        print('k* =', k_best)
+        return test_k_d_tree(dd, test_data, k_best, output_path)
 
 
 def grid(dd, k_best):
@@ -139,15 +153,11 @@ def train_brute_sort(train_data, kset, l):
 
         for n, f in enumerate(f_train_brute_sort(di_complement, di[:, 1:], kset)):
             k_best_r[i][n] = R(di, stitch(f, di[:, 1:]))
-    k_best = K[np.argmin(np.mean(k_best_r, axis=0))]
+    k_best = kset[np.argmin(np.mean(k_best_r, axis=0))]
     return dd, k_best
 
 
-def train_k_d_tree(name, kset, l, output):
-    train_data = dataset.parse('data/' + name + '.train.csv')
-    if output:
-        visual.display_2d_dataset(train_data, 'raw training data')  # Display training data
-
+def train_k_d_tree(train_data, kset, l):
     # instead of making a random partition we use parts of a shuffled array
     # this results in disjoint sets d_i
     np.random.shuffle(train_data)
@@ -164,8 +174,24 @@ def train_k_d_tree(name, kset, l, output):
     for i, d_tree in enumerate(d_trees):
         for n, f in enumerate(f_train_tree(d_tree, dd[i][:, 1:], kset)):
             k_best_r[i][n] = R(dd[i], stitch(f, dd[i][:, 1:]))
-    k_best = K[np.argmin(np.mean(k_best_r, axis=0))]
-    return dd, k_best
+    k_best = kset[np.argmin(np.mean(k_best_r, axis=0))]
+    return d_trees, k_best
+
+
+def test_k_d_tree(d_trees, test_data, k_best, output_path):
+    compare = np.zeros(len(test_data))
+    for n, x in enumerate(test_data):
+        for i, d_tree in enumerate(d_trees):
+            compare[n] += f_test_tree(d_tree, x[1:], k_best)
+    result_data = stitch(compare, test_data[:, 1:])
+    f_rate = R(test_data, result_data)
+    print('Failure rate (compared to test data):', f_rate)
+    dataset.save_to_file(output_path, result_data)
+
+    return f_rate, result_data
+
 
 gui = Gui(classify)
 gui.show()
+
+# classify(dataset.parse('data/bananas-1-2d.train.csv'), dataset.parse('data/bananas-1-2d.test.csv'), 'data/')
