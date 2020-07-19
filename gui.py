@@ -47,8 +47,7 @@ class Gui:
         self.l_label = Label(self.frame, text="Partition count (l):")
         self.l_slider = Scale(self.frame, from_=2, to=20, resolution=1, length=600, orient=HORIZONTAL, tickinterval=2)
 
-        self.kd_tree_checkbox_var = BooleanVar()
-        self.kd_tree_checkbox = Checkbutton(self.frame, var=self.kd_tree_checkbox_var, text="Use KD-Tree-Search (otherwise brute-searching)")
+        self.algorithm_combobox = ttk.Combobox(self.frame, values = ["brute-sort", "k-d_tree", "sklearn"], text="Search algorithm:", state="readonly")
 
         self.train_button = Button(self.frame, text = "Classify selected", command = self.train, width = 50)
         self.train_all_button = Button(self.frame, text="Classify all (print on console)", command=self.train_all, width=50)
@@ -68,6 +67,8 @@ class Gui:
 
         self.populate_datasets() # Scan the default directory for dataset files
 
+        self.algorithm_combobox.set("brute_sort")
+
         self.k_slider.set(50)
 
         self.l_slider.set(5)
@@ -86,7 +87,7 @@ class Gui:
         self.l_label.grid(column=0, row=6, padx=5, pady=2, sticky="W")
         self.l_slider.grid(column=0,columnspan=3, row=7, padx=10, pady=2, sticky="WE")
 
-        self.kd_tree_checkbox.grid(column = 0, row = 8, padx = 10, pady = 2, sticky = "W")
+        self.algorithm_combobox.grid(column = 0, row = 8, padx = 10, pady = 2, sticky = "W")
 
         self.train_button.grid(column = 0,columnspan = 3, row = 9, padx = 10, pady = 2, sticky="WE")
         self.train_all_button.grid(column=0, columnspan=3, row=10, padx=10, pady=2, sticky="WE")
@@ -188,9 +189,11 @@ class Gui:
         # Actually run the algorithm with the parameters from the GUI
         k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
                                                                   kset=np.arange(self.k_slider.get()),
-                                                                  l=self.l_slider.get(), algorithm='sklearn')
+                                                                  l=self.l_slider.get(), algorithm=self.algorithm_combobox.get())
 
         end_time = time.time() - start_time # The time the algorithm did take
+
+        print("Elapsed time:", end_time,"s")
 
         # Plot the result data
         self.result_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.result_data, "Result data:", micro = True),
@@ -205,7 +208,7 @@ class Gui:
         self.data_label.grid(column = 3, row = 13, padx = 10, pady = 4, sticky="NW")
 
         # Inform the user that the plot was finished
-        messagebox.showinfo("Information:", "The simulation was done in and the results were saved at " + output_path)
+        messagebox.showinfo("Information:", "The classification was done and the results were saved at " + output_path+".")
 
     # Invokes the algorithm for all datasets, and prints the results on the console
     def train_all(self):
@@ -220,7 +223,7 @@ class Gui:
 
         kset_val = np.arange(self.k_slider.get())
         l_val = self.l_slider.get()
-        bs_val = not self.kd_tree_checkbox_var.get()
+        algorithm_val = self.algorithm_combobox.get()
 
         for dataset_name in self.dataset_combobox['values']:
             print('## Running dataset', dataset_name, ' ##')
@@ -236,7 +239,7 @@ class Gui:
             k_best, f_rate, self.result_data = self.classify_function(train_data, test_data, output_path,
                                                                       kset=kset_val,
                                                                       l=l_val,
-                                                                      brute_sort=bs_val)
+                                                                      algorithm = algorithm_val)
 
             end_time = time.time() - start_time
 
@@ -246,6 +249,10 @@ class Gui:
             print('Elapsed time:', end_time) # Print the elapsed time
 
             print("## -------- ##\n")
+
+        # Inform the user that the plot was finished
+        messagebox.showinfo("Information:",
+                                "The classifications were done and the results were saved at the canonical locations.")
 
     # Displays the train data plot in the matplotlib window, allowing zoom, saving the image and closer inspection
     def display_train_data(self):

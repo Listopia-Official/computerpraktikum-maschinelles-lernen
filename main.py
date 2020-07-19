@@ -138,6 +138,8 @@ def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-s
         result[result == 0] = -1
         result_data = stitch(result, test_data[:, 1:])
         f_rate = R(result_data, test_data)
+        print("k* = unused")
+        print('Failure rate (compared to test data):', f_rate)
         return np.NAN, f_rate, result_data
 
 
