@@ -210,7 +210,7 @@ class Gui:
         # Actually run the algorithm with the parameters from the GUI
         if algo_val == "brute_sort": # Take grid into consideration
             k_best, f_rate, self.result_data, dd = self.classify_function(self.train_data, self.test_data, output_path,
-                                                                  kset=np.arange(self.k_slider.get()),
+                                                                  kset=np.arange(1, self.k_slider.get() + 1),
                                                                   l=self.l_slider.get(), algorithm=algo_val)
             end_time = time.time() - start_time  # The time the algorithm did take - don't measure the grid time
 
@@ -224,7 +224,7 @@ class Gui:
 
         else: # Else plot as normal
             k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
-                                                                          kset=np.arange(self.k_slider.get()),
+                                                                          kset=np.arange(1, self.k_slider.get() + 1),
                                                                           l=self.l_slider.get(), algorithm=algo_val)
             end_time = time.time() - start_time  # The time the algorithm did take
 

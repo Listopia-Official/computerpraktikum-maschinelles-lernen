@@ -118,7 +118,7 @@ def stitch(y, x):
     return data
 
 
-def classify_gui(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-sort'):
+def classify_gui(train_data, test_data, output_path, kset=K, l=5, algorithm='brute_sort'):
     if algorithm == 'brute_sort':
         dd, k_best = train_brute_sort(train_data, kset, l)
         print('k* =', k_best)
@@ -141,6 +141,9 @@ def classify_gui(train_data, test_data, output_path, kset=K, l=5, algorithm='bru
         print("k* = unused")
         print('Failure rate (compared to test data):', f_rate)
         return np.NAN, f_rate, result_data
+    else:
+        print('No algorithm specified')
+        return
 
 
 # Only works for 2D plots
@@ -212,7 +215,15 @@ def test_k_d_tree(d_trees, test_data, k_best, output_path):
     return f_rate, result_data
 
 
-gui = Gui(classify_gui, grid)
-gui.show()
+def classify(name, kset=K, l=5, algo='brute_sort'):
+    train_data = dataset.parse('data/' + name + '.train.csv')
+    test_data = dataset.parse('data/' + name + '.test.csv')
+    classify_gui(train_data, test_data, 'data/' + name + '.result.csv', kset, l, algo)
+
+
+classify('bananas-1-2d')
+
+#gui = Gui(classify_gui, grid)
+#gui.show()
 
 # classify(dataset.parse('data/bananas-1-2d.train.csv'), dataset.parse('data/bananas-1-2d.test.csv'), 'data/')
