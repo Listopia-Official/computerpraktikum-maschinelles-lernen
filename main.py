@@ -1,8 +1,12 @@
-import numpy as np
-import scipy.spatial as sp  # Is the library scipy allowed?
-import dataset
 import time
+import numpy as np
+
+import dataset
 import visual
+import k_d_tree
+
+ARRAY_LIMIT = 50000     # lower if memory errors occur; splits the large arrays if they are too large
+# equally important is using the 64-bit version of python
 
 K = np.arange(50)
 
@@ -19,23 +23,36 @@ def R(data1, data2):
 
 # return list of indices of nearest points
 # x is in array-shape
-def k_nearest(data, x, k_max):  # very time consuming
-    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
-    part_indx = np.argpartition(dist, k_max, axis=0)[:k_max]
-    sort_indx = np.argsort(np.take_along_axis(dist, part_indx, axis=0), axis=0)
-    return np.take_along_axis(part_indx, sort_indx, axis=0)  # (~1.4 sec)
+def k_nearest_brute_sort(data, x, k_max):
+    x_split = np.array_split(x, len(x) * len(data) // ARRAY_LIMIT + 1)
+    indx = []
+    for x in x_split:
+        # dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  #  very fast but scipy library not allowed
+        cen = np.repeat(data[:, 1:][:, np.newaxis, :], len(x), axis=1) - x  # (~0.6 sec)
+        sq = np.square(cen)  # (~0.2 sec)
+        dist = np.sum(sq, axis=2)
+        part_indx = np.argpartition(dist, k_max, axis=0)[:k_max]
+        sort_indx = np.argsort(np.take_along_axis(dist, part_indx, axis=0), axis=0)
+        indx.append(np.take_along_axis(part_indx, sort_indx, axis=0))
+    return np.concatenate(indx, axis=1)
 
 
-def k_nearest_alt(data, x, k):
-    dist = sp.distance.cdist(data[:, 1:], x, 'sqeuclidean')  # (~0.1 sec)
-    return np.argpartition(dist, k, axis=0)[:k]  # (~0.5 sec)
+def k_nearest_semi_sort(data, x, k):
+    x_split = np.array_split(x, len(x) * len(data) // ARRAY_LIMIT + 1)
+    indx = []
+    for x in x_split:
+        cen = np.repeat(data[:, 1:][:, np.newaxis, :], len(x), axis=1) - x
+        sq = np.square(cen)
+        dist = np.sum(sq, axis=2)
+        indx.append(np.argpartition(dist, k, axis=0)[:k])
+    return np.concatenate(indx, axis=1)
 
 
-# computes f_D,k for given x value for k in array shape
-def f_naive(data, x, kset):
-    near = k_nearest(data, x, np.max(kset))  # using k_nearest to only compute it once
+# computes f_D,k for given x values for k in array shape
+def f_train_brute_sort(data, x, kset):
+    near = k_nearest_brute_sort(data, x, np.max(kset))  # using k_nearest to only compute it once
     y = data[:, :1]
-    nearest_bin = np.take_along_axis(np.repeat(y, len(x), axis=1), near, axis=0)
+    nearest_bin = np.take_along_axis(y, near, axis=0)  # assembles array of nearest ys
     results = []
     for k in kset:
         result = np.sign(np.sum(nearest_bin[:k], axis=0))
@@ -45,13 +62,27 @@ def f_naive(data, x, kset):
 
 
 # computes f_D,k for given x values
-def f_naive_alt(data, x, k):
-    near = k_nearest_alt(data, x, k)  # using k_nearest_alt because it is faster
+def f_test_semi_sort(data, x, k):
+    near = k_nearest_semi_sort(data, x, k)
     y = data[:, :1]
-    nearest_bin = np.take_along_axis(np.repeat(y, len(x), axis=1), near, axis=0)
+    nearest_bin = np.take_along_axis(y, near, axis=0)
     result = np.sign(np.sum(nearest_bin, axis=0))
     result[result == 0] = 1  # sets sign(0) to 1
     return result
+
+
+# computes f_D,k for given x values for k in array shape with k-d tree
+def f_train_tree(data_tree, x, kset):
+    results = np.zeros((len(kset), len(x)))
+    for i, point in enumerate(x):
+        near_data, dist = k_d_tree.knn(data_tree, point, np.max(kset))  # using k_nearest to only compute it once
+        near_data = np.take(near_data, np.argsort(dist), axis=0)
+        for j, k in enumerate(kset):
+            result = np.sign(np.sum(near_data[:k, 0]))
+            if result == 0:
+                result = 1
+            results[j, i] = result
+    return results
 
 
 # computes final f_D for given x values and k*
@@ -60,7 +91,7 @@ def f_final(data_segmented, x, k):
 
     for i, di in enumerate(data_segmented):
         di_complement = np.concatenate(np.delete(data_segmented, i, axis=0))
-        tmp = tmp + f_naive_alt(di_complement, x, k)
+        tmp = tmp + f_test_semi_sort(di_complement, x, k)
 
     result = np.sign(tmp)
     result[result == 0] = 1  # sets sign(0) to 1
@@ -74,40 +105,78 @@ def stitch(y, x):
 
 
 def classify(name, kset=K, l=5, output=True):
-    train = dataset.parse('data/' + name + '.train.csv')
+    dd, k_best = train_brute_sort(name, kset, l, output)
+    print('k* =', k_best)
+
+    test(dd, name, k_best, output)
+
+    if False and output:  # only work in 2 dimensions
+        grid(dd, k_best)
+
+
+def grid(dd, k_best):
+    grid_x = [[n / 100, m / 100] for n in range(100) for m in range(100)]
+    visual.display_2d_dataset(stitch(f_final(dd, grid_x, k_best), grid_x), 'f evaluated to grid')  # Display grid
+
+
+def test(dd, name, k_best,  output):
+    test_data = dataset.parse('data/' + name + '.test.csv')
+    if output:
+        visual.display_2d_dataset(test_data, 'raw testing data')  # Display test data
+    compare = f_final(dd, test_data[:, 1:], k_best)
+    f_rate = R(test_data, stitch(compare, test_data[:, 1:]))
+    print('Failure rate (compared to test data):', f_rate)
 
     if output:
-        visual.display_2d_dataset(train)  # Display training
+        visual.display_2d_dataset(stitch(compare, test_data[:, 1:]), 'f evaluated to testing data')
+        # Display result labels of test data
+
+    return f_rate
+
+
+def train_brute_sort(name, kset, l, output):
+    train_data = dataset.parse('data/' + name + '.train.csv')
+    if output:
+        visual.display_2d_dataset(train_data, 'raw training data')  # Display training data
 
     # instead of making a random partition we use parts of a shuffled array
-    # this results in disjoint sets d_i (what would arbitrary sets imply?)
-    np.random.shuffle(train)
+    # this results in disjoint sets d_i
+    np.random.shuffle(train_data)
     # this way we have d_i = dd[i]
-    dd = np.array_split(train, l)
-
-    k_best_r = np.ones((l, len(kset)))
-
+    dd = np.array_split(train_data, l)
+    k_best_r = np.empty((l, len(kset)))
     for i, di in enumerate(dd):
         di_complement = np.concatenate(np.delete(dd, i, axis=0))
 
-        for n, f in enumerate(f_naive(di_complement, di[:, 1:], kset)):
+        for n, f in enumerate(f_train_brute_sort(di_complement, di[:, 1:], kset)):
             k_best_r[i][n] = R(di, stitch(f, di[:, 1:]))
-
     k_best = K[np.argmin(np.mean(k_best_r, axis=0))]
-    print('k* =', k_best)
+    return dd, k_best
 
-    test = dataset.parse('data/' + name + '.test.csv')
 
+def train_k_d_tree(name, kset, l, output):
+    train_data = dataset.parse('data/' + name + '.train.csv')
     if output:
-        visual.display_2d_dataset(test)  # Display test data
+        visual.display_2d_dataset(train_data, 'raw training data')  # Display training data
 
-    compare = f_final(dd, test[:, 1:], k_best)
-    print('Failure rate (compared to test data):', R(test, stitch(compare, test[:, 1:])))
-    if output:
-        visual.display_2d_dataset(stitch(compare, test[:, 1:]))  # Display guessed labels of test data
+    # instead of making a random partition we use parts of a shuffled array
+    # this results in disjoint sets d_i
+    np.random.shuffle(train_data)
+    # this way we have d_i = dd[i]
+    dd = np.array_split(train_data, l)
+    d_trees = []
+    k_best_r = np.empty((l, len(kset)))
+    for i, di in enumerate(dd):
+        di_complement = np.concatenate(np.delete(dd, i, axis=0))
+        d_trees.append(k_d_tree.build_tree(di_complement, np.shape(di)[1] - 1))
 
-    # grid = [[n/100, m/100] for n in range(100) for m in range(100)]
-    # visual.display_2d_dataset(stitch(f_final(dd, grid, k_best), grid)) # Display grid
+    print('All trees constructed')
+
+    for i, d_tree in enumerate(d_trees):
+        for n, f in enumerate(f_train_tree(d_tree, dd[i][:, 1:], kset)):
+            k_best_r[i][n] = R(dd[i], stitch(f, dd[i][:, 1:]))
+    k_best = K[np.argmin(np.mean(k_best_r, axis=0))]
+    return dd, k_best
 
 
 def classify_all(kset=K, l=5):
@@ -121,20 +190,9 @@ def classify_all(kset=K, l=5):
 
 # classify_all()
 
-classify('bananas-1-4d', K, 5)
+# classify('bananas-1-2d', K, 5)
 
 # debug statements
-# timeit.timeit("main.classify('bananas-1-4d')", "import main", number=1)
 
-
-# print(timeit.timeit("numpy.argsort(dist, axis=0)[:20]",
-#                    "import dataset, scipy.spatial, numpy\n" +
-#                    "dat = dataset.parse('data/toy-2d.train.csv')\n" +
-#                    "dist = scipy.spatial.distance.cdist(dat[:, 1:], dat[:, 1:], 'sqeuclidean')", number=10))
-
-# dat = dataset.parse('data_artificial/toy-2d.train.csv')
-
-# print("prev", k_nearest(dat, np.array([[1, 2], [0, 0], [1, 0]]), 10))
-# print("now", k_nearest_alt(dat, np.array([[1, 2], [0, 0], [1, 0]]), 10))
-# print(f_naive(dat, dat[:, 1:], 200))
-# print(R(stitch(f_naive(dat, dat[:, 1:], 15), dat[:, 1:]), dat)) # compares naive f to training data
+# d, k = train_k_d_tree('australian', K, 5, False)
+# print(k)

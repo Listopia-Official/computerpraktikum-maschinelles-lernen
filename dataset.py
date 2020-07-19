@@ -14,4 +14,5 @@ def parse(path):
     return d
 
 
-# print(parse('data_artificial/toy-2d.test.csv'))
+def save_to_file(path):
+    pass  # TODO save functionality
