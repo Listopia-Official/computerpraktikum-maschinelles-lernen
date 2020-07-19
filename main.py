@@ -1,5 +1,6 @@
 import time
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier  # only used as a comparable implementation
 
 import dataset
 import visual
@@ -127,7 +128,15 @@ def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-s
         f_rate, result_data = test_k_d_tree(dd, test_data, k_best, output_path)
         return k_best, f_rate, result_data
     elif algorithm == 'sklearn':  # Comparing with existing implementation
-        pass
+        sk_classifier = KNeighborsClassifier(n_neighbors=50)
+        bool_y = np.copy(train_data[:, 0])
+        bool_y[bool_y == -1] = 0
+        sk_classifier.fit(train_data[:, 1:], bool_y)
+        result = sk_classifier.predict(test_data[:, 1:])
+        result[result == 0] = -1
+        result_data = stitch(result, test_data[:, 1:])
+        f_rate = R(result_data, test_data)
+        return np.NAN, f_rate, result_data
 
 
 def grid(dd, k_best):
