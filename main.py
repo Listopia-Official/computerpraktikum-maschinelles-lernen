@@ -221,9 +221,9 @@ def classify(name, kset=K, l=5, algo='brute_sort'):
     classify_gui(train_data, test_data, 'data/' + name + '.result.csv', kset, l, algo)
 
 
-classify('bananas-1-2d')
+# classify('bananas-1-2d')
 
-#gui = Gui(classify_gui, grid)
-#gui.show()
+gui = Gui(classify_gui, grid)
+gui.show()
 
 # classify(dataset.parse('data/bananas-1-2d.train.csv'), dataset.parse('data/bananas-1-2d.test.csv'), 'data/')
