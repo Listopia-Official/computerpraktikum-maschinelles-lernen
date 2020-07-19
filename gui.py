@@ -47,7 +47,11 @@ class Gui:
         self.l_label = Label(self.frame, text="Partition count (l):")
         self.l_slider = Scale(self.frame, from_=2, to=20, resolution=1, length=600, orient=HORIZONTAL, tickinterval=2)
 
-        self.algorithm_combobox = ttk.Combobox(self.frame, values = ["brute-sort", "k-d_tree", "sklearn"], text="Search algorithm:", state="readonly")
+        self.algorithm_label = Label(self.frame, text="Algorithm:")
+        self.algorithm_combobox = ttk.Combobox(self.frame, values = ["brute_sort", "k-d_tree", "sklearn"], text="Search algorithm:", state="readonly")
+
+        self.grid_checkbox_var = BooleanVar()
+        self.grid_checkbox = Checkbutton(self.frame, text="Display grid (instead of the test dataset)", var = self.grid_checkbox_var)
 
         self.train_button = Button(self.frame, text = "Classify selected", command = self.train, width = 50)
         self.train_all_button = Button(self.frame, text="Classify all (print on console)", command=self.train_all, width=50)
@@ -87,19 +91,22 @@ class Gui:
         self.l_label.grid(column=0, row=6, padx=5, pady=2, sticky="W")
         self.l_slider.grid(column=0,columnspan=3, row=7, padx=10, pady=2, sticky="WE")
 
-        self.algorithm_combobox.grid(column = 0, row = 8, padx = 10, pady = 2, sticky = "W")
+        self.algorithm_label.grid(column=0, row=8, padx=5, pady=2, sticky="W")
+        self.algorithm_combobox.grid(column = 0, row = 9, padx = 10, pady = 2, sticky = "W")
 
-        self.train_button.grid(column = 0,columnspan = 3, row = 9, padx = 10, pady = 2, sticky="WE")
-        self.train_all_button.grid(column=0, columnspan=3, row=10, padx=10, pady=2, sticky="WE")
+        self.grid_checkbox.grid(column=0, row=10, padx=5, pady=2, sticky="W")
 
-        self.train_data_label.grid(column = 0, row = 11, padx = 10, pady = 2)
-        self.train_data_zoom_button.grid(column=0, row=12, padx=10, pady=2)
+        self.train_button.grid(column = 0,columnspan = 3, row = 11, padx = 10, pady = 2, sticky="WE")
+        self.train_all_button.grid(column=0, columnspan=3, row=12, padx=10, pady=2, sticky="WE")
 
-        self.test_data_label.grid(column=1, row=11, padx=10, pady=2)
-        self.test_data_zoom_button.grid(column=1, row=12, padx=10, pady=2)
+        self.train_data_label.grid(column = 0, row = 13, padx = 10, pady = 2)
+        self.train_data_zoom_button.grid(column=0, row=14, padx=10, pady=2)
 
-        self.result_data_label.grid(column=2, row=11, padx=10, pady=2)
-        self.result_data_zoom_button.grid(column=2, row=12, padx=10, pady=2)
+        self.test_data_label.grid(column=1, row=13, padx=10, pady=2)
+        self.test_data_zoom_button.grid(column=1, row=14, padx=10, pady=2)
+
+        self.result_data_label.grid(column=2, row=13, padx=10, pady=2)
+        self.result_data_zoom_button.grid(column=2, row=14, padx=10, pady=2)
 
         # By default those are None
         self.train_data = None
@@ -181,8 +188,8 @@ class Gui:
                                                  master=self.frame)
 
         # Position the components
-        self.train_data_plot._tkcanvas.grid(column = 0, row = 13, padx = 10, pady = 4)
-        self.test_data_plot._tkcanvas.grid(column=1, row=13, padx=10, pady=4)
+        self.train_data_plot._tkcanvas.grid(column = 0, row = 15, padx = 10, pady = 4)
+        self.test_data_plot._tkcanvas.grid(column=1, row=15, padx=10, pady=4)
 
         start_time = time.time()
 
@@ -199,13 +206,13 @@ class Gui:
         self.result_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.result_data, "Result data:", micro = True),
                                                   master=self.frame)
 
-        self.result_data_plot._tkcanvas.grid(column=2, row=13, padx=10, pady=4)
+        self.result_data_plot._tkcanvas.grid(column=2, row=15, padx=10, pady=4)
 
 
         # Plot some stats about the current run
         self.data_label = Message(self.frame, anchor = "w",text="Time: {:.4f}s \nFailure rate: {:.4f}\n k*: {}".format(end_time, f_rate, k_best), width = 125)
 
-        self.data_label.grid(column = 3, row = 13, padx = 10, pady = 4, sticky="NW")
+        self.data_label.grid(column = 3, row = 15, padx = 10, pady = 4, sticky="NW")
 
         # Inform the user that the plot was finished
         messagebox.showinfo("Information:", "The classification was done and the results were saved at " + output_path+".")
