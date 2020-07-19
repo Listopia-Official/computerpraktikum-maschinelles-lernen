@@ -21,9 +21,10 @@ A class modeling our main application window.
 class Gui:
 
     # Classify function reference is passed so we don't have circular dependencies
-    def __init__(self, classify_function):
+    def __init__(self, classify_function, grid_function):
 
         self.classify_function = classify_function
+        self.grid_function = grid_function
 
         # Configure main frame
         self.frame = Tk()
@@ -175,6 +176,12 @@ class Gui:
         # Extract some information from the GUI and compute the dataset file names (assuming they follow the canonical name scheme)
         dataset_name = self.dataset_combobox.get()
         data_dir = self.data_folder_textfield.get()
+        algo_val = self.algorithm_combobox.get()
+        display_grid = self.grid_checkbox_var.get()
+
+        if display_grid and algo_val == "sklearn":
+            messagebox.showerror("Error:", "The grid is not supported for sklearn!")
+            return
 
         self.train_data = dataset.parse(data_dir + "/" + dataset_name + ".train.csv")
         self.test_data = dataset.parse(data_dir + "/" + dataset_name + ".test.csv")
@@ -184,19 +191,35 @@ class Gui:
 
         # Plot the training and test data with matplotlib and embedd them into the window
         self.train_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.train_data, "Training data:", micro = True), master=self.frame)
-        self.test_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.test_data, "Test data:", micro = True),
+
+        if not display_grid:
+            self.test_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.test_data, "Test data:", micro = True),
                                                  master=self.frame)
 
         # Position the components
         self.train_data_plot._tkcanvas.grid(column = 0, row = 15, padx = 10, pady = 4)
-        self.test_data_plot._tkcanvas.grid(column=1, row=15, padx=10, pady=4)
 
         start_time = time.time()
 
         # Actually run the algorithm with the parameters from the GUI
-        k_best, f_rate, self.result_data, dd = self.classify_function(self.train_data, self.test_data, output_path,
+        if algo_val != "sklearn":
+            k_best, f_rate, self.result_data, dd = self.classify_function(self.train_data, self.test_data, output_path,
                                                                   kset=np.arange(self.k_slider.get()),
-                                                                  l=self.l_slider.get(), algorithm=self.algorithm_combobox.get())
+                                                                  l=self.l_slider.get(), algorithm=algo_val)
+
+            if display_grid:
+                grid = self.grid_function(dd, k_best, 100)# Hardcoded grid-size of 100
+
+                self.test_data_plot = FigureCanvasTkAgg(
+                    visual.display_2d_dataset(grid, "Grid:", micro=True),
+                    master=self.frame)
+
+        else:
+            k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
+                                                                          kset=np.arange(self.k_slider.get()),
+                                                                          l=self.l_slider.get(), algorithm=algo_val)
+
+        self.test_data_plot._tkcanvas.grid(column=1, row=15, padx=10, pady=4)
 
         end_time = time.time() - start_time # The time the algorithm did take
 

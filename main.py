@@ -118,7 +118,7 @@ def stitch(y, x):
     return data
 
 
-def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-sort'):
+def classify_gui(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-sort'):
     if algorithm == 'brute_sort':
         dd, k_best = train_brute_sort(train_data, kset, l)
         print('k* =', k_best)
@@ -143,8 +143,8 @@ def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-s
         return np.NAN, f_rate, result_data
 
 
-def grid(dd, k_best):
-    grid_x = [[n / 100, m / 100] for n in range(100) for m in range(100)]
+def grid(dd, k_best, grid_size):
+    grid_x = [[n / grid_size, m / grid_size] for n in range(grid_size) for m in range(grid_size)]
     visual.display_2d_dataset(stitch(f_final(dd, grid_x, k_best), grid_x), 'f evaluated to grid')  # Display grid
 
 
@@ -211,7 +211,7 @@ def test_k_d_tree(d_trees, test_data, k_best, output_path):
     return f_rate, result_data
 
 
-gui = Gui(classify)
+gui = Gui(classify_gui, grid)
 gui.show()
 
 # classify(dataset.parse('data/bananas-1-2d.train.csv'), dataset.parse('data/bananas-1-2d.test.csv'), 'data/')
