@@ -8,7 +8,7 @@ import k_d_tree
 ARRAY_LIMIT = 50000     # lower if memory errors occur; splits the large arrays if they are too large
 # equally important is using the 64-bit version of python
 
-K = np.arange(50)
+K = np.arange(1, 201)
 
 
 # returns failure rate of data2 compared to data1, parameters have to have same sorting and same shape
@@ -189,9 +189,9 @@ def classify_all(kset=K, l=5):
         print('Elapsed time:', elapsed_time, '\n')
 
 
-# classify_all()
+classify_all()
 
-classify('bananas-1-2d', K, 5)
+# classify('bananas-1-2d', K, 5)
 
 # debug statements
 
