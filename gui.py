@@ -156,7 +156,9 @@ class Gui:
 
         start_time = time.time()
 
-        k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path, kset=np.arange(self.k_slider.get()), l=self.l_slider.get(), brute_sort = not self.kd_tree_checkbox_var.get())
+        k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
+                                                                  kset=np.arange(self.k_slider.get()),
+                                                                  l=self.l_slider.get(), algorithm='k-d_tree')
 
         end_time = time.time() - start_time
 

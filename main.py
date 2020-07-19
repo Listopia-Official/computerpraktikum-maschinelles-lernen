@@ -9,7 +9,7 @@ from gui import *
 ARRAY_LIMIT = 50000     # lower if memory errors occur; splits the large arrays if they are too large
 # equally important is using the 64-bit version of python
 
-K = np.arange(1, 5)
+K = np.arange(1, 201)
 
 
 # returns failure rate of data2 compared to data1, parameters have to have same sorting and same shape
@@ -115,17 +115,19 @@ def stitch(y, x):
     return data
 
 
-def classify(train_data, test_data, output_path, kset=K, l=5, brute_sort=True):
-    if brute_sort:
+def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-sort'):
+    if algorithm == 'brute_sort':
         dd, k_best = train_brute_sort(train_data, kset, l)
         print('k* =', k_best)
         f_rate, result_data = test(dd, test_data, k_best, output_path)
         return k_best, f_rate, result_data
-    else:
+    elif algorithm == 'k-d_tree':
         dd, k_best = train_k_d_tree(train_data, kset, l)
         print('k* =', k_best)
         f_rate, result_data = test_k_d_tree(dd, test_data, k_best, output_path)
         return k_best, f_rate, result_data
+    elif algorithm == 'sklearn':  # Comparing with existing implementation
+        pass
 
 
 def grid(dd, k_best):
@@ -185,6 +187,8 @@ def test_k_d_tree(d_trees, test_data, k_best, output_path):
     for n, x in enumerate(test_data):
         for i, d_tree in enumerate(d_trees):
             compare[n] += f_test_tree(d_tree, x[1:], k_best)
+    compare = np.sign(compare)
+    compare[compare == 0] = 1
     result_data = stitch(compare, test_data[:, 1:])
     f_rate = R(test_data, result_data)
     print('Failure rate (compared to test data):', f_rate)
