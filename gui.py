@@ -179,8 +179,13 @@ class Gui:
         algo_val = self.algorithm_combobox.get()
         display_grid = self.grid_checkbox_var.get()
 
-        if display_grid and algo_val == "sklearn":
-            messagebox.showerror("Error:", "The grid is not supported for sklearn!")
+        # Grid is only supported for brute_sort and 2D datasets
+        if display_grid and algo_val != "brute_sort":
+            messagebox.showerror("Error:", "The grid is only supported for brutesort!")
+            return
+
+        if display_grid and not dataset_name.endswith("2d"):
+            messagebox.showerror("Error:", "The grid is only supported for 2D datasets.")
             return
 
         self.train_data = dataset.parse(data_dir + "/" + dataset_name + ".train.csv")
@@ -192,6 +197,7 @@ class Gui:
         # Plot the training and test data with matplotlib and embedd them into the window
         self.train_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.train_data, "Training data:", micro = True), master=self.frame)
 
+        # Display training data of grid is disabled
         if not display_grid:
             self.test_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.test_data, "Test data:", micro = True),
                                                  master=self.frame)
@@ -202,26 +208,27 @@ class Gui:
         start_time = time.time()
 
         # Actually run the algorithm with the parameters from the GUI
-        if algo_val != "sklearn":
+        if algo_val == "brute_sort": # Take grid into consideration
             k_best, f_rate, self.result_data, dd = self.classify_function(self.train_data, self.test_data, output_path,
                                                                   kset=np.arange(self.k_slider.get()),
                                                                   l=self.l_slider.get(), algorithm=algo_val)
+            end_time = time.time() - start_time  # The time the algorithm did take - don't measure the grid time
 
-            if display_grid:
-                grid = self.grid_function(dd, k_best, 100)# Hardcoded grid-size of 100
+            if display_grid: # If displayed, plot it into the test data plot
+                grid = self.grid_function(dd, k_best, 100) # Hardcoded grid-size of 100
 
                 self.test_data_plot = FigureCanvasTkAgg(
                     visual.display_2d_dataset(grid, "Grid:", micro=True),
                     master=self.frame)
+                self.test_data = grid # Set test data to grid
 
-        else:
+        else: # Else plot as normal
             k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
                                                                           kset=np.arange(self.k_slider.get()),
                                                                           l=self.l_slider.get(), algorithm=algo_val)
+            end_time = time.time() - start_time  # The time the algorithm did take
 
         self.test_data_plot._tkcanvas.grid(column=1, row=15, padx=10, pady=4)
-
-        end_time = time.time() - start_time # The time the algorithm did take
 
         print("Elapsed time:", end_time,"s")
 

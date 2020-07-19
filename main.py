@@ -143,9 +143,10 @@ def classify_gui(train_data, test_data, output_path, kset=K, l=5, algorithm='bru
         return np.NAN, f_rate, result_data
 
 
+# Only works for 2D plots
 def grid(dd, k_best, grid_size):
-    grid_x = [[n / grid_size, m / grid_size] for n in range(grid_size) for m in range(grid_size)]
-    visual.display_2d_dataset(stitch(f_final(dd, grid_x, k_best), grid_x), 'f evaluated to grid')  # Display grid
+    grid = [[n / grid_size, m / grid_size] for n in range(grid_size) for m in range(grid_size)]
+    return stitch(f_final(dd, grid, k_best), grid)
 
 
 # compares prediction based on k* with test data and saves result_data
