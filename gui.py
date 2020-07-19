@@ -208,13 +208,13 @@ class Gui:
         start_time = time.time()
 
         # Actually run the algorithm with the parameters from the GUI
-        if algo_val == "brute_sort": # Take grid into consideration
+        if algo_val != "sklearn": # Take grid into consideration
             k_best, f_rate, self.result_data, dd = self.classify_function(self.train_data, self.test_data, output_path,
                                                                   kset=np.arange(1, self.k_slider.get() + 1),
                                                                   l=self.l_slider.get(), algorithm=algo_val)
             end_time = time.time() - start_time  # The time the algorithm did take - don't measure the grid time
 
-            if display_grid: # If displayed, plot it into the test data plot
+            if algo_val == "brute_sort" and display_grid: # If displayed, plot it into the test data plot
                 grid = self.grid_function(dd, k_best, 100) # Hardcoded grid-size of 100
 
                 self.test_data_plot = FigureCanvasTkAgg(
@@ -273,7 +273,13 @@ class Gui:
             start_time = time.time()
 
             # Execute per dataset
-            k_best, f_rate, self.result_data, dd = self.classify_function(train_data, test_data, output_path,
+            if algorithm_val == "sklearn":
+                k_best, f_rate, self.result_data = self.classify_function(train_data, test_data, output_path,
+                                                                              kset=kset_val,
+                                                                              l=l_val,
+                                                                              algorithm=algorithm_val)
+            else:
+                k_best, f_rate, self.result_data, dd = self.classify_function(train_data, test_data, output_path,
                                                                       kset=kset_val,
                                                                       l=l_val,
                                                                       algorithm = algorithm_val)
