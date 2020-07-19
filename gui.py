@@ -44,6 +44,7 @@ class Gui:
         self.kd_tree_checkbox = Checkbutton(self.frame, var=self.kd_tree_checkbox_var, text="Use KD-Tree-Search (otherwise brute-searching)")
 
         self.train_button = Button(self.frame, text = "Classify selected", command = self.train, width = 50)
+        self.train_all_button = Button(self.frame, text="Classify all (print on console)", command=self.train_all, width=50)
 
         self.train_data_label = Label(self.frame, text="Training data:")
         self.train_data_zoom_button = Button(self.frame, text="Detailed view", command = self.display_train_data)
@@ -80,15 +81,16 @@ class Gui:
         self.kd_tree_checkbox.grid(column = 0, row = 8, padx = 10, pady = 2, sticky = "W")
 
         self.train_button.grid(column = 0,columnspan = 3, row = 9, padx = 10, pady = 2, sticky="WE")
+        self.train_all_button.grid(column=0, columnspan=3, row=10, padx=10, pady=2, sticky="WE")
 
-        self.train_data_label.grid(column = 0, row = 10, padx = 10, pady = 2)
-        self.train_data_zoom_button.grid(column=0, row=11, padx=10, pady=2)
+        self.train_data_label.grid(column = 0, row = 11, padx = 10, pady = 2)
+        self.train_data_zoom_button.grid(column=0, row=12, padx=10, pady=2)
 
-        self.test_data_label.grid(column=1, row=10, padx=10, pady=2)
-        self.test_data_zoom_button.grid(column=1, row=11, padx=10, pady=2)
+        self.test_data_label.grid(column=1, row=11, padx=10, pady=2)
+        self.test_data_zoom_button.grid(column=1, row=12, padx=10, pady=2)
 
-        self.result_data_label.grid(column=2, row=10, padx=10, pady=2)
-        self.result_data_zoom_button.grid(column=2, row=11, padx=10, pady=2)
+        self.result_data_label.grid(column=2, row=11, padx=10, pady=2)
+        self.result_data_zoom_button.grid(column=2, row=12, padx=10, pady=2)
 
         self.train_data = None
         self.test_data = None
@@ -149,8 +151,8 @@ class Gui:
         self.test_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.test_data, "Test data:", micro = True),
                                                  master=self.frame)
 
-        self.train_data_plot._tkcanvas.grid(column = 0, row = 12, padx = 10, pady = 4)
-        self.test_data_plot._tkcanvas.grid(column=1, row=12, padx=10, pady=4)
+        self.train_data_plot._tkcanvas.grid(column = 0, row = 13, padx = 10, pady = 4)
+        self.test_data_plot._tkcanvas.grid(column=1, row=13, padx=10, pady=4)
 
         start_time = time.time()
 
@@ -161,13 +163,46 @@ class Gui:
         self.result_data_plot = FigureCanvasTkAgg(visual.display_2d_dataset(self.result_data, "Result data:", micro = True),
                                                   master=self.frame)
 
-        self.result_data_plot._tkcanvas.grid(column=2, row=12, padx=10, pady=4)
+        self.result_data_plot._tkcanvas.grid(column=2, row=13, padx=10, pady=4)
 
         self.data_label = Message(self.frame, anchor = "w",text="Time: {:.4f}s \nFailure rate: {:.4f}\n k*: {}".format(end_time, f_rate, k_best), width = 125)
 
-        self.data_label.grid(column = 3, row = 12, padx = 10, pady = 4, sticky="NW")
+        self.data_label.grid(column = 3, row = 13, padx = 10, pady = 4, sticky="NW")
 
         messagebox.showinfo("Information:", "The simulation was done in and the results were saved at " + output_path)
+
+    def train_all(self):
+        if len(self.dataset_combobox['values']) == 0:
+            messagebox.showerror("Error:", "No data are there to be used.")
+            return
+
+        data_dir = self.data_folder_textfield.get()
+
+        kset_val = np.arange(self.k_slider.get())
+        l_val = self.l_slider.get()
+        bs_val = not self.kd_tree_checkbox_var.get()
+
+        for dataset_name in self.dataset_combobox['values']:
+            print('## Running dataset', dataset_name, ' ##')
+
+            train_data = dataset.parse(data_dir + "/" + dataset_name + ".train.csv")
+            test_data = dataset.parse(data_dir + "/" + dataset_name + ".test.csv")
+
+            output_path = data_dir + "/" + dataset_name + ".result.csv"
+
+            start_time = time.time()
+
+            k_best, f_rate, self.result_data = self.classify_function(train_data, test_data, output_path,
+                                                                      kset=kset_val,
+                                                                      l=l_val,
+                                                                      brute_sort=bs_val)
+
+            end_time = time.time() - start_time
+
+
+            print('Elapsed time:', end_time)
+
+            print("## -------- ##\n")
 
     def display_train_data(self):
         self.display_data(self.train_data, "Detailed train data view:")
@@ -185,16 +220,3 @@ class Gui:
 
         fig = visual.display_2d_dataset(data, title)
         fig.show()
-
-
-    #dataset.parse('data/' + name + '.train.csv')
-
-    #def classify_all(kset=K, l=5):
-    #    for data_file in dataset.datasets:
-     #       print('Running dataset', data_file, '...')
-    #        start_time = time.time()
-        #    classify(data_file, kset, l, output=False)
-       #     elapsed_time = time.time() - start_time
-         #   print('Elapsed time:', elapsed_time, '\n')
-
-    # classify_all()
