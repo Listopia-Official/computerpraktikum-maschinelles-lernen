@@ -4,6 +4,7 @@ import numpy as np
 import dataset
 import visual
 import k_d_tree
+from gui import *
 
 ARRAY_LIMIT = 50000     # lower if memory errors occur; splits the large arrays if they are too large
 # equally important is using the 64-bit version of python
@@ -189,7 +190,7 @@ def classify_all(kset=K, l=5):
         print('Elapsed time:', elapsed_time, '\n')
 
 
-# classify_all()
+#classify_all()
 
 classify('bananas-1-2d', K, 5)
 
@@ -197,3 +198,6 @@ classify('bananas-1-2d', K, 5)
 
 # d, k = train_k_d_tree('australian', K, 5, False)
 # print(k)
+
+gui = Gui()
+gui.show()
