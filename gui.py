@@ -10,6 +10,7 @@ import os
 import visual
 import dataset
 import numpy as np
+import sys
 
 class Gui:
 
@@ -88,6 +89,7 @@ class Gui:
 
     def close(self):
         self.frame.destroy()
+        sys.exit()
 
     def show(self):
         self.frame.mainloop()
