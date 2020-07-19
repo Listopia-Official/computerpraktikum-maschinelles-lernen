@@ -187,6 +187,8 @@ def test_k_d_tree(d_trees, test_data, k_best, output_path):
     for n, x in enumerate(test_data):
         for i, d_tree in enumerate(d_trees):
             compare[n] += f_test_tree(d_tree, x[1:], k_best)
+    compare = np.sign(compare)
+    compare[compare == 0] = 1
     result_data = stitch(compare, test_data[:, 1:])
     f_rate = R(test_data, result_data)
     print('Failure rate (compared to test data):', f_rate)
