@@ -3,9 +3,10 @@ import dataset
 import time
 import visual
 
-ARRAY_LIMIT = 50000  # lower if memory errors occur; splits the large arrays if they are too large
+ARRAY_LIMIT = 50000     # lower if memory errors occur; splits the large arrays if they are too large
+# equally important is using the 64-bit version of python
 
-K = np.arange(50)
+K = np.arange(200)
 
 
 # returns failure rate of data2 compared to data1, parameters have to have same sorting and same shape
@@ -144,9 +145,9 @@ def classify_all(kset=K, l=5):
         print('Elapsed time:', elapsed_time, '\n')
 
 
-# classify_all()
+classify_all()
 
-classify('bananas-1-2d', K, 5)
+# classify('ijcnn1', K, 5)
 
 # debug statements
 # timeit.timeit("main.classify('bananas-1-4d')", "import main", number=1)
