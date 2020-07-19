@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from matplotlib.colors import Colormap
 
 def display_2d_dataset(data, title='scatter plot', micro=False):
 

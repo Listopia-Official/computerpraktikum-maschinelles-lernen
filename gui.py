@@ -20,6 +20,7 @@ class Gui:
         # UI components
         self.frame = Tk()
         self.frame.title("CP_ML-Classificator")
+        self.frame.protocol('WM_DELETE_WINDOW', self.close)
 
         self.data_folder_label = Label(self.frame, text="Data directory:")
         self.data_folder_textfield = Entry(self.frame, width = 100, state="readonly")
@@ -84,6 +85,9 @@ class Gui:
         self.train_data = None
         self.test_data = None
         self.result_data = None
+
+    def close(self):
+        self.frame.destroy()
 
     def show(self):
         self.frame.mainloop()
