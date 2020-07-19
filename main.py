@@ -119,11 +119,13 @@ def classify(train_data, test_data, output_path, kset=K, l=5, brute_sort=True):
     if brute_sort:
         dd, k_best = train_brute_sort(train_data, kset, l)
         print('k* =', k_best)
-        return test(dd, test_data, k_best, output_path)
+        f_rate, result_data = test(dd, test_data, k_best, output_path)
+        return k_best, f_rate, result_data
     else:
         dd, k_best = train_k_d_tree(train_data, kset, l)
         print('k* =', k_best)
-        return test_k_d_tree(dd, test_data, k_best, output_path)
+        f_rate, result_data = test_k_d_tree(dd, test_data, k_best, output_path)
+        return k_best, f_rate, result_data
 
 
 def grid(dd, k_best):
