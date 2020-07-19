@@ -188,7 +188,7 @@ class Gui:
         # Actually run the algorithm with the parameters from the GUI
         k_best, f_rate, self.result_data = self.classify_function(self.train_data, self.test_data, output_path,
                                                                   kset=np.arange(self.k_slider.get()),
-                                                                  l=self.l_slider.get(), algorithm='k-d_tree')
+                                                                  l=self.l_slider.get(), algorithm='sklearn')
 
         end_time = time.time() - start_time # The time the algorithm did take
 

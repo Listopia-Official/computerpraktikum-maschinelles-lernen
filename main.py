@@ -1,5 +1,6 @@
 import time
 import numpy as np
+from sklearn.neighbors import KNeighborsClassifier  # only used as a comparable implementation
 
 import dataset
 import visual
@@ -38,6 +39,8 @@ def k_nearest_brute_sort(data, x, k_max):
     return np.concatenate(indx, axis=1)
 
 
+# returns list of k nearest points (unsorted)
+# x is in array-shape
 def k_nearest_semi_sort(data, x, k):
     x_split = np.array_split(x, len(x) * len(data) // ARRAY_LIMIT + 1)
     indx = []
@@ -62,7 +65,7 @@ def f_train_brute_sort(data, x, kset):
     return results
 
 
-# computes f_D,k for given x values
+# computes f_D,k for given x values for one k
 def f_test_semi_sort(data, x, k):
     near = k_nearest_semi_sort(data, x, k)
     y = data[:, :1]
@@ -72,7 +75,7 @@ def f_test_semi_sort(data, x, k):
     return result
 
 
-# computes f_D,k for given x values for k in array shape with k-d tree
+# computes f_D,k for given x values with k in array shape with k-d tree
 def f_train_tree(data_tree, x, kset):
     results = np.zeros((len(kset), len(x)))
     for i, point in enumerate(x):
@@ -96,7 +99,7 @@ def f_test_tree(data_tree, x, k):
     return result
 
 
-# computes final f_D for given x values and k*
+# computes final f_D for given x values and k* (only brute-sort)
 def f_final(data_segmented, x, k):
     tmp = np.zeros(len(x))
 
@@ -127,7 +130,15 @@ def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-s
         f_rate, result_data = test_k_d_tree(dd, test_data, k_best, output_path)
         return k_best, f_rate, result_data
     elif algorithm == 'sklearn':  # Comparing with existing implementation
-        pass
+        sk_classifier = KNeighborsClassifier(n_neighbors=np.max(K))
+        bool_y = np.copy(train_data[:, 0])
+        bool_y[bool_y == -1] = 0
+        sk_classifier.fit(train_data[:, 1:], bool_y)
+        result = sk_classifier.predict(test_data[:, 1:])
+        result[result == 0] = -1
+        result_data = stitch(result, test_data[:, 1:])
+        f_rate = R(result_data, test_data)
+        return np.NAN, f_rate, result_data
 
 
 def grid(dd, k_best):
@@ -135,6 +146,7 @@ def grid(dd, k_best):
     visual.display_2d_dataset(stitch(f_final(dd, grid_x, k_best), grid_x), 'f evaluated to grid')  # Display grid
 
 
+# compares prediction based on k* with test data and saves result_data
 def test(dd, test_data, k_best,  output_path):
     compare = f_final(dd, test_data[:, 1:], k_best)
     result_data = stitch(compare, test_data[:, 1:])
