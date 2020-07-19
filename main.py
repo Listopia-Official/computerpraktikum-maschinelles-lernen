@@ -130,7 +130,7 @@ def classify(train_data, test_data, output_path, kset=K, l=5, algorithm='brute-s
         f_rate, result_data = test_k_d_tree(dd, test_data, k_best, output_path)
         return k_best, f_rate, result_data
     elif algorithm == 'sklearn':  # Comparing with existing implementation
-        sk_classifier = KNeighborsClassifier(n_neighbors=50)
+        sk_classifier = KNeighborsClassifier(n_neighbors=np.max(K))
         bool_y = np.copy(train_data[:, 0])
         bool_y[bool_y == -1] = 0
         sk_classifier.fit(train_data[:, 1:], bool_y)
