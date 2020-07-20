@@ -43,22 +43,40 @@
 
 \section{Ausgesuchte Codebeispiele}
 \begin{frame}{Codebeispiele}{Struktur und Module}
+Code ist Open-Source auf Github: \url{https://github.com/raphaelMi/computerpraktikum-maschinelles-lernen}\\[0.4em]
 Unser Programm ist in folgende Module aufgeteilt:
 \begin{itemize}
-\item{main.py: Hauptmodul mit wesentlichen Algorithmen}
-\item{dataset.py: Datensatz-Import/-Export}
-\item{gui.py: Grafische Oberfläche}
-\item{kd\_tree.py: Hilfsmodul für k-d-Search}
-\item{visual.py: Plotting der Datensätze}
+\item{\textbf{main.py}: Hauptmodul mit wesentlichen Algorithmen}
+\item{\textbf{dataset.py}: Datensatz-Import/-Export}
+\item{\textbf{gui.py}: Grafische Oberfläche}
+\item{\textbf{kd\_tree.py}: Hilfsmodul für k-d-Search}
+\item{\textbf{visual.py}: Plotting der Datensätze}
 \end{itemize}
 
 Verwendete Bibliotheken:
 \begin{itemize}
-\item{numpy: Effizientes (vektorisiertes) Rechnen}
-\item{matplotlib: Generieren der Plots}
-\item{tkinter: Grafische Benutzeroberflächen}
-\item{scikit-learn: Ein dritter Algorithmus zum Vergleich}
+\item{\textbf{numpy}: Effizientes (vektorisiertes) Rechnen}
+\item{\textbf{matplotlib}: Generieren der Plots}
+\item{\textbf{tkinter}: Grafische Benutzeroberflächen}
+\item{\textbf{scikit-learn}: Ein dritter Algorithmus zum Vergleich}
 \end{itemize}
-
+\end{frame}
+\begin{frame}{Codebeispiele}{Klassifikation}
+Die \textbf{classify}-Funktion ist das "Herz" unseres Programmes:
+\includegraphics[scale=0.633]{assets/classify_brute.png}\\[0.4em]
+Parameter:
+\begin{itemize}
+\item{\textbf{train\_data}: Trainingsdaten}
+\item{\textbf{train\_data}: Testdaten}
+\item{\textbf{output\_path}: Ausgabedatei der Ergebnisdaten}
+\item{\textbf{kset}: Menge der k}
+\item{\textbf{l}: Partitionsanzahl}
+\item{\textbf{algorithm}: Suchalgorithmus für Nachbarn}
+\end{itemize}
+Ablauf:
+\begin{enumerate}[1.]
+\item{Training mit gegebenen Trainingsdaten und Sortieralgorithmus}
+\item{Klassifikation und der Testdaten und Darstellung der Resultate}
+\end{enumerate}
 \end{frame}
 \end{document}
