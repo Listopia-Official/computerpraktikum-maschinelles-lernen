@@ -41,6 +41,87 @@
 
 \end{frame}
 
+\begin{frame}
+Die Klassifikationsergebnisse für \textit{brute\_sort} mit $k_\text{max} = 200, l = 5$:
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Datensatz:}& \textbf{Laufzeit (in Sekunden):} & \textbf{$\text{k}^*$:} & \textbf{Fehlerrate:}\\
+
+\hline
+
+australian & 0.20 & 126 & 0.1346\\
+
+\hline
+
+bananas-1-2d  &11.4 &36 &0.2083\\
+
+\hline
+
+bananas-1-4d  &21.92 &48 &0.2088\\
+
+\hline
+
+bananas-2-2d  &11.08 &75 &0.2122\\
+
+\hline
+
+bananas-2-4d  &21.30 &32 &0.2213\\
+
+\hline
+
+bananas-5-2d  &10.96 &89 &0.2555\\
+
+\hline
+
+bananas-5-4d  &22.07 &175 &0.2542\\
+
+\hline
+
+ cod-rna.5000 &18.61 &8 &0.0693\\
+
+\hline
+
+ ijcnn1 &1150.36 &1 &0.0299\\
+
+\hline
+
+ijcnn1.10000  &41.12 &2 &0.0247\\
+
+\hline
+
+ijcnn1.5000  &10.01 &2 &0.0173\\
+
+\hline
+
+svmguide1  &5.10 &20 &0.0343\\
+
+\hline
+
+
+
+toy-2d  &11.35 &100 &0.2153\\
+
+\hline
+
+ toy-3d &18.95 &62 &0.2288\\
+
+\hline
+
+toy-4d  &21.89 &39 &0.2240\\
+
+\hline
+
+toy-10d  &45.28 &112 &0.2140\\
+
+\hline
+
+
+\end{tabular}
+\end{center}
+Die Zeiten wurden nur für den 'brute-sort'-Algorithmus dokumentiert, weil der 'k-d tree'-Algorithmus nicht genügend optimiert ist
+\end{frame}
+
 \begin{frame}{Showcase}{Testen mit anderen Daten}
 \textbf{Frage:} Was passiert, wenn wir als Testdaten andere Datensätze verwenden?
 \begin{center}\includegraphics[scale=0.25]{assets/changed_test_data.png}\end{center}
