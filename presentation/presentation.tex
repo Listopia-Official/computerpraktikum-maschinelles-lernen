@@ -32,12 +32,39 @@
 \end{frame}
 
 \section{Theorie}
-\begin{frame}{Theorie}{Theorie}
+\begin{frame}{Theorie}{Binäre Klassifikation}
+\textbf{Ziel: Binäre Klassifikation eines zuvor unbekannten Datensatzes anhand Trainingsdaten.}
 
+Gegeben seien Trainingsdaten $(y_i,x_i)_{i=0}^n$ wobei $x_i \in [0, 1]^d$ und $y_i \in \{-1, 1\}$.
+Wie ist es möglich für einen neuen Datensatz $(y'_i,x'_i)_{i=0}^{n'}$ die $y'_i$ möglichst gut (mit minimaler Fehlerquote) zu schätzen?
+
+Gesucht ist also eine Funktion $f \colon [0,1]^d \to \{-1,1\}$ die ein möglichst guter Prädiktor für neue Punkte sein soll.
+
+$\implies$ Es werden die $k$-nächsten Nachbarn des zu klassifizierenden Punktes $x$ bestimmt und ein Majoriätsvotum durchgeführt.
+\begin{center}\includegraphics[scale=0.40]{assets/knearest.png}\end{center}
+\end{frame}
+
+\begin{frame}{Theorie}{Binäre Klassifikation}
+Problem: Wie findet man man den optimalen Wert für $k$ ($=k^*)$?
+
+Keine gute Idee: Trainingsdaten gegen sich selbst testen und $k^*$ als $k$ mit kleinster Fehlerrate wählen
+\begin{center}\includegraphics[scale=0.40]{assets/naive_approach.png}\end{center}
+Mit diesem Ansatz würde immer $k^*=1$ mit hoher Fehlerrate.
+
+Benutzter Ansatz: Trainingsdatensatz $D$ wird in $l$ zufällige Teildatensätze $D_i$ aufgeteilt. Teste $D_i$ gegen Komplement $D \setminus D_i$ und wahle $k^*$ als $k$ mit durchschnittlich niedrigster Fehlerrate.
+\end{frame}
+
+\begin{frame}{Theorie}{$k$-nächste Nachbarn}
+Die Bestimmung $k$-nächster Nachbarn ist Hauptkomplexität des Verfahrens. Es gibt zwei Möglichkeiten für die Bestimmung der nähesten Punkte:
+\begin{enumerate}
+\item \textbf{brute search} - Berechnen aller Abstände und Auswählen der $k$ kleinsten. Dies hat asymtotische Zeitkomplexität $O(k\cdot n^2)$ und ist für dünne oder hoch dimensionsionale Datensätze effizient sein.
+\item \textbf{tree search (etwa $k$-d order ball tree)} - Ausnutzen der Baumeigenschaften um große Teile des Datensatzes zu eliminieren. Dies hat asymtotische Zeitkomplexität $O(k \cdot n \log n)$ und ist effizient falls $n \gg 2^d$ (worst case $O(k\cdot n^2)$).
+\end{enumerate}
+In unserem Programm sind beide Alogrithmen implementiert, der $k$-d tree Algorithmus ist aber nicht genügend optimiert.
 \end{frame}
 
 \section{Showcase}
-\begin{frame}{Showcase}{Showcase}
+\begin{frame}{Showcase}{}
 
 \end{frame}
 
