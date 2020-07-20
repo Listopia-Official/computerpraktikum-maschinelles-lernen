@@ -201,6 +201,12 @@ Algorithmus zur Ermittlung der k-nächsten Nachbarn.
 \begin{center}
 \includegraphics[scale=0.52]{assets/train_brute_sort_impl.png}
 \end{center}
+Ablauf:
+\begin{enumerate}[1.]
+\item{Berechnung des euklidischen Abstandes aller Punkte zueinander}
+\item{Sortierung nach Abstand pro Punkt}
+\item{Herauspicken der $k_\text{max}$ ersten (und damit nächsten) Punkte}
+\end{enumerate}
 \end{frame}
 
 \begin{frame}{Codebeispiele}{Testen}
