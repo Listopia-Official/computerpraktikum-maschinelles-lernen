@@ -16,7 +16,7 @@
 \usepackage{hyperref}
 
 \title{Computerpraktikum Maschinelles Lernen}
-\subtitle{Thema 4 - Klassifikationsverfahren}
+\subtitle{Thema 4 - Binäre Klassifikation}
 \author{Pascal Bauer, Raphael Millon, Florian Haas}
 \institute{Sommersemester 2020}
 \date{\today}
@@ -201,5 +201,34 @@ Algorithmus zur Ermittlung der k-nächsten Nachbarn.
 \begin{center}
 \includegraphics[scale=0.52]{assets/train_brute_sort_impl.png}
 \end{center}
+\end{frame}
+
+\begin{frame}{Codebeispiele}{Testen}
+Nun werden die Ergebnisse aus dem Training auf die Testdaten angewendet:
+\begin{center}
+\includegraphics[scale=0.75]{assets/test.png}
+\end{center}
+Ablauf:
+\begin{enumerate}[1.]
+\item{Assemblierung der finalen Funktion $f_D$ gemäß Aufgabenstellung}
+\item{Anwenden von $f_D$ auf die Testdaten}
+\item{Berechnen der Fehlerrate}
+\item{Speichern des resultierenden Datensatzes}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{Codebeispiele}{Gitter}
+Anstatt $f_D$ auf die Testdaten anzuwenden, wird $f_D$ in Gitterpunkten ausgewertet: 
+\begin{center}
+\includegraphics[scale=0.5]{assets/grid.png}
+\end{center}
+Hier simulieren wir ein Gitter mit $n$ gleichverteilten Punkten in $[0, 1] \times [0, 1]$.\\[0.4em]
+Dies erlaubt uns, mehr Einsicht in $f_D$ zu erhalten, als über die Plots der Ergebnisse möglich wäre.
+\end{frame}
+
+\begin{frame}{Binäre Klassifikation}
+\begin{huge}
+Raum für Fragen und Diskussion...
+\end{huge}
 \end{frame}
 \end{document}
