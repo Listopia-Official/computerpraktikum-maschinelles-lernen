@@ -17,7 +17,7 @@
 
 \title{Computerpraktikum Maschinelles Lernen}
 \subtitle{Thema 4 - Binäre Klassifikation}
-\author{Pascal Bauer, Raphael Millon, Florian Haas}
+\author{Pascal Bauer, Raphael Million, Florian Haas}
 \institute{Sommersemester 2020}
 \date{\today}
 \titlegraphic{assets/Empty.png}
@@ -51,14 +51,14 @@ Keine gute Idee: Trainingsdaten gegen sich selbst testen und $k^*$ als $k$ mit k
 \begin{center}\includegraphics[scale=0.40]{assets/naive_approach.png}\end{center}
 Mit diesem Ansatz würde immer $k^*=1$ mit hoher Fehlerrate.
 
-Benutzter Ansatz: Trainingsdatensatz $D$ wird in $l$ zufällige Teildatensätze $D_i$ aufgeteilt. Teste $D_i$ gegen Komplement $D \setminus D_i$ und wahle $k^*$ als $k$ mit durchschnittlich niedrigster Fehlerrate.
+Benutzter Ansatz: Trainingsdatensatz $D$ wird in $l$ zufällige Teildatensätze $D_i$ aufgeteilt. Teste $D_i$ gegen Komplement $D \setminus D_i$ und wähle $k^*$ als $k$ mit durchschnittlich niedrigster Fehlerrate.
 \end{frame}
 
 \begin{frame}{Theorie}{$k$-nächste Nachbarn}
 Die Bestimmung $k$-nächster Nachbarn ist Hauptkomplexität des Verfahrens. Es gibt zwei Möglichkeiten für die Bestimmung der nähesten Punkte:
 \begin{enumerate}
-\item \textbf{brute search} - Berechnen aller Abstände und Auswählen der $k$ kleinsten. Dies hat asymtotische Zeitkomplexität $O(k\cdot n^2)$ und ist für dünne oder hoch dimensionsionale Datensätze effizient sein.
-\item \textbf{tree search (etwa $k$-d order ball tree)} - Ausnutzen der Baumeigenschaften um große Teile des Datensatzes zu eliminieren. Dies hat asymtotische Zeitkomplexität $O(k \cdot n \log n)$ und ist effizient falls $n \gg 2^d$ (worst case $O(k\cdot n^2)$).
+\item \textbf{brute search} - Berechnen aller Abstände und Auswählen der $k$ kleinsten. Dies hat asymtotische Zeitkomplexität $O(k\cdot n^2)$ und ist für dünne oder hoch dimensionsionale Datensätze effizient.
+\item \textbf{tree search (etwa $k$-d oder ball tree)} - Ausnutzen der Baumeigenschaften um große Teile des Datensatzes zu eliminieren. Dies hat asymtotische Zeitkomplexität $O(k \cdot n \log n)$ und ist effizient falls $n \gg 2^d$ (worst case $O(k\cdot n^2)$).
 \end{enumerate}
 In unserem Programm sind beide Alogrithmen implementiert, der $k$-d tree Algorithmus ist aber nicht genügend optimiert.
 \end{frame}
